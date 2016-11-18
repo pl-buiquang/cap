@@ -8,7 +8,10 @@ const search = (query) => algoliaIndex.search(query, {});
 
 export default class MapPage extends Component {
   componentDidMount() {
-    search('louvre')
+    this.mapSearch('louvre');
+  }
+  mapSearch(query) {
+    search(query)
       .then((data) => this.setState(data))
       .catch((err) => console.log(err));
   }
@@ -23,6 +26,7 @@ export default class MapPage extends Component {
     return (
       <div style={{ width: '100%'}}>
         <div style={{ width: '50%', float: 'left'}}>
+          <input name="search actor" type="text" placeholder="search" onChange={(e) => this.mapSearch(e.target.value)}/>
           <LeftBar actors={actors} />
         </div>
         <div style={{ width: '50%', float: 'right' }}>

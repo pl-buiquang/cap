@@ -3,7 +3,7 @@ import { Map, Marker, Popup, TileLayer } from 'react-leaflet';
 
 const position = [48.8566, 2.3522];
 const marker = ({ lat, lon, name, adress }) => (
-  <Marker key={`${lat}${lat}${lon}`} position={[parseFloat(lat), parseFloat(lon)]}>
+  <Marker key={`${name}${lat}${lon}`} position={[parseFloat(lat), parseFloat(lon)]}>
     <Popup>
       <span>{name}<br/>{adress}</span>
     </Popup>
