@@ -21785,7 +21785,7 @@ var CapCarto =
 	            nom_initiative = _ref.nom_initiative;
 	        return {
 	          adress: adresse_initiative,
-	          lon: long_initiative,
+	          lng: long_initiative,
 	          lat: lat_initiative,
 	          name: nom_initiative
 	        };
@@ -28816,6 +28816,12 @@ var CapCarto =
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+	var extractBounds = function extractBounds(bounds) {
+	  var ne = bounds.getNorthEast && bounds.getNorthEast();
+	  var sw = bounds.getNorthEast && bounds.getSouthWest();
+	  return { sw: sw, ne: ne };
+	};
+
 	var App = function (_Component) {
 	  _inherits(App, _Component);
 
@@ -28841,6 +28847,11 @@ var CapCarto =
 	        _react2.default.createElement(
 	          'div',
 	          { style: { width: '50%', float: 'left' } },
+	          _react2.default.createElement(
+	            'h1',
+	            null,
+	            this.props.bounds.ne + ' ' + this.props.bounds.sw
+	          ),
 	          _react2.default.createElement('input', { name: 'search actor', type: 'text', placeholder: 'search', onInput: function onInput(e) {
 	              return e.target.value.length && _this2.props.searchActors(e.target.value);
 	            } }),
@@ -28849,7 +28860,7 @@ var CapCarto =
 	        _react2.default.createElement(
 	          'div',
 	          { style: { width: '50%', float: 'right' } },
-	          _react2.default.createElement(_Map2.default, { actors: this.props.actors })
+	          _react2.default.createElement(_Map2.default, { actors: this.props.actors, updateBounds: this.props.updateBounds })
 	        )
 	      );
 	    }
@@ -28861,7 +28872,7 @@ var CapCarto =
 	var mapStateToProps = function mapStateToProps(state) {
 	  return {
 	    actors: state.actors,
-	    bounds: state.bounds
+	    bounds: extractBounds(state.bounds)
 	  };
 	};
 
@@ -28884,17 +28895,39 @@ var CapCarto =
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	exports.default = function (_ref) {
-	  var actors = _ref.actors;
+	var filterActorsByViewport = function filterActorsByViewport(_ref, _ref2) {
+	  var ne = _ref.ne,
+	      sw = _ref.sw;
+	  var lat = _ref2.lat,
+	      lng = _ref2.lng;
+
+	  var top = ne.lat < parseFloat(lat);
+	  var bottom = parseFloat(lat) > sw.lat;
+	  var right = parseFloat(lng) < ne.lng;
+	  var left = parseFloat(lng) > sw.lng;
+
+	  var horizontal = top && bottom;
+	  var vertical = right && left;
+	  return horizontal && vertical;
+	};
+
+	exports.default = function (_ref3) {
+	  var actors = _ref3.actors,
+	      bounds = _ref3.bounds;
 	  return actors && _react2.default.createElement(
 	    'div',
 	    null,
-	    actors.map(function (_ref2) {
-	      var name = _ref2.name,
-	          adress = _ref2.adress;
+	    actors.filter(function (a) {
+	      return filterActorsByViewport(bounds, a);
+	    }).map(function (_ref4) {
+	      var name = _ref4.name,
+	          adress = _ref4.adress;
 	      return _react2.default.createElement(
 	        'div',
 	        { key: '' + name + adress },
+	        console.log(actors.filter(function (a) {
+	          return filterActorsByViewport(bounds, a);
+	        }).length),
 	        _react2.default.createElement(
 	          'h2',
 	          null,
@@ -28948,23 +28981,23 @@ var CapCarto =
 
 	var position = [48.8566, 2.3522];
 
-	var icon = L.icon({
-	  iconUrl: '/static/img/Economie-partagee-et-finance-solidaire_small.png',
-	  iconSize: [38, 95],
-	  iconAnchor: [22, 94],
-	  popupAnchor: [-3, -76],
-	  shadowSize: [68, 95],
-	  shadowAnchor: [22, 94]
-	});
+	// const icon = L.icon({
+	//     iconUrl: '/static/img/typologEconomie-partagee-et-finance-solidaire_small.png',
+	//     iconSize: [38, 95],
+	//     iconAnchor: [22, 94],
+	//     popupAnchor: [-3, -76],
+	//     shadowSize: [68, 95],
+	//     shadowAnchor: [22, 94]
+	// });
 
 	var marker = function marker(_ref) {
 	  var lat = _ref.lat,
-	      lon = _ref.lon,
+	      lng = _ref.lng,
 	      name = _ref.name,
 	      adress = _ref.adress;
 	  return _react2.default.createElement(
 	    _reactLeaflet.Marker,
-	    { key: '' + name + lat + lon, position: [parseFloat(lat), parseFloat(lon)], icon: icon },
+	    { key: '' + name + lat + lng, position: [parseFloat(lat), parseFloat(lng)] },
 	    _react2.default.createElement(
 	      _reactLeaflet.Popup,
 	      null,
@@ -28979,8 +29012,8 @@ var CapCarto =
 	  );
 	};
 
-	var CapMap = function (_MapComponent) {
-	  _inherits(CapMap, _MapComponent);
+	var CapMap = function (_Component) {
+	  _inherits(CapMap, _Component);
 
 	  function CapMap() {
 	    _classCallCheck(this, CapMap);
@@ -28989,6 +29022,17 @@ var CapCarto =
 	  }
 
 	  _createClass(CapMap, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      var _this2 = this;
+
+	      var lMap = this.refs.map.leafletElement;
+	      lMap.on('moveend', function () {
+	        return _this2.props.updateBounds(lMap.getBounds());
+	      });
+	      this.props.updateBounds(lMap.getBounds());
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
 	      var _props$actors = this.props.actors,
@@ -28996,7 +29040,7 @@ var CapCarto =
 
 	      return _react2.default.createElement(
 	        _reactLeaflet.Map,
-	        { center: position, zoom: 13, style: { height: '600px' } },
+	        { center: position, zoom: 13, style: { height: '600px' }, ref: 'map' },
 	        _react2.default.createElement(_reactLeaflet.TileLayer, {
 	          url: _config2.default['tileLayerURL'],
 	          attribution: '<a href=\\"http://creativecommons.org/licenses/by-sa/2.0/\\">CC-BY-SA</a>, Imagery \xA9 <a href=\\"http://mapbox.com\\">Mapbox</a>'
@@ -29007,7 +29051,7 @@ var CapCarto =
 	  }]);
 
 	  return CapMap;
-	}(_reactLeaflet.MapComponent);
+	}(_react.Component);
 
 	exports.default = CapMap;
 	module.exports = exports['default'];
@@ -31559,7 +31603,693 @@ var CapCarto =
 /***/ function(module, exports) {
 
 	module.exports = {
-		"tileLayerURL": "https://api.mapbox.com/v4/mapbox.streets/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiYnVpcXVhbmciLCJhIjoiNWE5NzUyZjNiYjliNWI1MGQxNGY0Nzc0NjE3ZTYwOTIifQ.lso1FxqtSY256Po3t4oKJA"
+		"tileLayerURL": "https://api.mapbox.com/v4/mapbox.streets/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiYnVpcXVhbmciLCJhIjoiNWE5NzUyZjNiYjliNWI1MGQxNGY0Nzc0NjE3ZTYwOTIifQ.lso1FxqtSY256Po3t4oKJA",
+		"typology": [
+			{
+				"label": "Alimentation et agricultures locales",
+				"color": "#6AA426",
+				"img": {
+					"small": "/static/img/typologies/Alimentation-et-agricultures-locales.png",
+					"big": "/static/img/typologies/Alimentation-et-agricultures-locales_small.png"
+				},
+				"id": "1",
+				"url": null
+			},
+			{
+				"label": "Culture",
+				"color": "#D36CA8",
+				"img": {
+					"small": "/static/img/typologies/Cultures-et-loisirs.png",
+					"big": "/static/img/typologies/Cultures-et-loisirs_small.png"
+				},
+				"id": "2",
+				"url": null
+			},
+			{
+				"label": "Economie - Travail",
+				"color": "#3576BB",
+				"img": {
+					"small": "/static/img/typologies/Economie-partagee-et-finance-solidaire.png",
+					"big": "/static/img/typologies/Economie-partagee-et-finance-solidaire_small.png"
+				},
+				"id": "4",
+				"url": null
+			},
+			{
+				"label": "Education",
+				"color": "#EF7D00",
+				"img": {
+					"small": "/static/img/typologies/Education-populaire-et-pedagogies-alternatives.png",
+					"big": "/static/img/typologies/Education-populaire-et-pedagogies-alternatives_small.png"
+				},
+				"id": "5",
+				"url": null
+			},
+			{
+				"label": "Démocratie et Médias",
+				"color": "#FF0000",
+				"img": {
+					"small": "/static/img/typologies/Expertise-et-parole-citoyennes.png",
+					"big": "/static/img/typologies/Expertise-et-parole-citoyennes_small.png"
+				},
+				"id": "6",
+				"url": null
+			},
+			{
+				"label": "Logement - Urbanisme",
+				"color": "#B2B2B2",
+				"img": {
+					"small": "/static/img/typologies/Logement.png",
+					"big": "/static/img/typologies/Logement_small.png"
+				},
+				"id": "8",
+				"url": null
+			},
+			{
+				"label": "Réemploi - Technologies libres - DIY",
+				"color": "#845227",
+				"img": {
+					"small": "/static/img/typologies/Recuperation-et-creation.png",
+					"big": "/static/img/typologies/Recuperation-et-creation_small.png"
+				},
+				"id": "10",
+				"url": null
+			},
+			{
+				"label": "Santé",
+				"color": "#14905d",
+				"img": {
+					"small": "/static/img/typologies/Sante.png",
+					"big": "/static/img/typologies/Sante_small.png"
+				},
+				"id": "24",
+				"url": null
+			},
+			{
+				"label": "Energie et Transports",
+				"color": "#ffdd44",
+				"img": {
+					"small": "/static/img/typologies/energie.png",
+					"big": "/static/img/typologies/energie_small.png"
+				},
+				"id": "25",
+				"url": null
+			}
+		],
+		"zones": {
+			"1": {
+				"label": "(1e) Louvre",
+				"districts": [
+					{
+						"label": "Les Halles",
+						"id": "94"
+					},
+					{
+						"label": "Palais Royal",
+						"id": "119"
+					},
+					{
+						"label": "Place Vendome",
+						"id": "121"
+					},
+					{
+						"label": "Saint-Germain L'Auxerrois",
+						"id": "122"
+					}
+				]
+			},
+			"2": {
+				"label": "(2e) Bourse",
+				"districts": [
+					{
+						"label": "Gaillon - Vivienne",
+						"id": "116"
+					},
+					{
+						"label": "Montorgueil - Saint-Denis",
+						"id": "99"
+					},
+					{
+						"label": "Quartier test",
+						"id": "124"
+					},
+					{
+						"label": "Sentier - Bonne Nouvelle",
+						"id": "101"
+					}
+				]
+			},
+			"3": {
+				"label": "(3e) Temple",
+				"districts": [
+					{
+						"label": "Archives",
+						"id": "102"
+					},
+					{
+						"label": "Arts-et-Métiers",
+						"id": "91"
+					},
+					{
+						"label": "Enfants Rouges",
+						"id": "96"
+					},
+					{
+						"label": "Sainte-Avoie",
+						"id": "103"
+					}
+				]
+			},
+			"4": {
+				"label": "(4e) Hôtel de Ville",
+				"districts": [
+					{
+						"label": "Arsenal",
+						"id": "98"
+					},
+					{
+						"label": "Les Iles",
+						"id": "118"
+					},
+					{
+						"label": "Saint-Gervais",
+						"id": "93"
+					},
+					{
+						"label": "Saint-Merri",
+						"id": "108"
+					}
+				]
+			},
+			"5": {
+				"label": "(5e) Panthéon",
+				"districts": [
+					{
+						"label": "Jardin Des Plantes",
+						"id": "64"
+					},
+					{
+						"label": "Saint-Victor",
+						"id": "84"
+					},
+					{
+						"label": "Sorbonne",
+						"id": "89"
+					},
+					{
+						"label": "Val De Grace",
+						"id": "52"
+					}
+				]
+			},
+			"6": {
+				"label": "(6e) Luxembourg",
+				"districts": [
+					{
+						"label": "Monnaie",
+						"id": "110"
+					},
+					{
+						"label": "Notre-Dame Des Champs",
+						"id": "97"
+					},
+					{
+						"label": "Odeon",
+						"id": "106"
+					},
+					{
+						"label": "Rennes",
+						"id": "104"
+					},
+					{
+						"label": "Saint-Germain Des Pres",
+						"id": "114"
+					},
+					{
+						"label": "Saint-Placide",
+						"id": "92"
+					}
+				]
+			},
+			"7": {
+				"label": "(7e) Palais Bourbon",
+				"districts": [
+					{
+						"label": "Ecole Militaire",
+						"id": "83"
+					},
+					{
+						"label": "Gros Caillou",
+						"id": "26"
+					},
+					{
+						"label": "Invalides",
+						"id": "107"
+					},
+					{
+						"label": "Saint-Thomas D'Aquin",
+						"id": "86"
+					}
+				]
+			},
+			"8": {
+				"label": "(8e) Élysée",
+				"districts": [
+					{
+						"label": "Elysees - Madeleine",
+						"id": "112"
+					},
+					{
+						"label": "Europe",
+						"id": "111"
+					},
+					{
+						"label": "Hoche - Friedland",
+						"id": "109"
+					},
+					{
+						"label": "Mairie",
+						"id": "100"
+					},
+					{
+						"label": "Monceau",
+						"id": "115"
+					},
+					{
+						"label": "Saint-Philippe Du Roule",
+						"id": "113"
+					},
+					{
+						"label": "Triangle D'Or",
+						"id": "117"
+					}
+				]
+			},
+			"9": {
+				"label": "(9e) Opéra",
+				"districts": [
+					{
+						"label": "Clichy - Trinite",
+						"id": "77"
+					},
+					{
+						"label": "La Fayette - Richer",
+						"id": "88"
+					},
+					{
+						"label": "Lorette - Martyrs",
+						"id": "80"
+					},
+					{
+						"label": "Provence - Opera",
+						"id": "120"
+					},
+					{
+						"label": "Trudaine - Rochechouart",
+						"id": "73"
+					}
+				]
+			},
+			"10": {
+				"label": "(10e) Entrepôt",
+				"districts": [
+					{
+						"label": "Chateau D'Eau - Lancry",
+						"id": "58"
+					},
+					{
+						"label": "Faubourg Du Temple - Hopital Saint-Louis",
+						"id": "56"
+					},
+					{
+						"label": "Grange Aux Belles - Terrage",
+						"id": "85"
+					},
+					{
+						"label": "Louis Blanc - Aqueduc",
+						"id": "76"
+					},
+					{
+						"label": "Porte Saint-Denis - Paradis",
+						"id": "72"
+					},
+					{
+						"label": "Saint-Vincent De Paul - Lariboisiere",
+						"id": "87"
+					}
+				]
+			},
+			"11": {
+				"label": "(11e) Popincourt",
+				"districts": [
+					{
+						"label": "Bastille - Popincourt",
+						"id": "20"
+					},
+					{
+						"label": "Belleville - Saint-Maur",
+						"id": "9"
+					},
+					{
+						"label": "Leon Blum - Folie-Regnault",
+						"id": "14"
+					},
+					{
+						"label": "Nation - Alexandre Dumas",
+						"id": "19"
+					},
+					{
+						"label": "Republique - Saint-Ambroise",
+						"id": "11"
+					}
+				]
+			},
+			"12": {
+				"label": "(12e) Reuilly",
+				"districts": [
+					{
+						"label": "Aligre - Gare De Lyon",
+						"id": "22"
+					},
+					{
+						"label": "Bel-Air Nord",
+						"id": "45"
+					},
+					{
+						"label": "Bel-Air Sud",
+						"id": "53"
+					},
+					{
+						"label": "Bercy",
+						"id": "95"
+					},
+					{
+						"label": "Jardin de Reuilly",
+						"id": "30"
+					},
+					{
+						"label": "Nation - Picpus",
+						"id": "59"
+					},
+					{
+						"label": "Vall",
+						"id": "48"
+					}
+				]
+			},
+			"13": {
+				"label": "(13e) Gobelins",
+				"districts": [
+					{
+						"label": "Bièvre Sud - Tolbiac",
+						"id": "2"
+					},
+					{
+						"label": "Buttes Aux Cailles - Daviel",
+						"id": "1"
+					},
+					{
+						"label": "Croulebarbe",
+						"id": "57"
+					},
+					{
+						"label": "Dunois - Bibliotheque - Jeanne-D'Arc",
+						"id": "40"
+					},
+					{
+						"label": "Nationale - Deux Moulins",
+						"id": "79"
+					},
+					{
+						"label": "Olympiades - Choisy",
+						"id": "8"
+					},
+					{
+						"label": "Patay - Massena",
+						"id": "49"
+					},
+					{
+						"label": "Salpetriere - Austerlitz",
+						"id": "60"
+					}
+				]
+			},
+			"14": {
+				"label": "(14e) Observatoire",
+				"districts": [
+					{
+						"label": "Didot - Porte De Vanves",
+						"id": "18"
+					},
+					{
+						"label": "Jean Moulin - Porte D'Orleans",
+						"id": "36"
+					},
+					{
+						"label": "Montparnasse - Raspail",
+						"id": "70"
+					},
+					{
+						"label": "Montsouris - Dareau",
+						"id": "41"
+					},
+					{
+						"label": "Mouton-Duvernet",
+						"id": "68"
+					},
+					{
+						"label": "Pernety",
+						"id": "16"
+					}
+				]
+			},
+			"15": {
+				"label": "(15e) Vaugirard",
+				"districts": [
+					{
+						"label": "Alleray - Procession",
+						"id": "46"
+					},
+					{
+						"label": "Cambronne - Garibaldi",
+						"id": "31"
+					},
+					{
+						"label": "Citroen - Boucicaut",
+						"id": "50"
+					},
+					{
+						"label": "Dupleix - La Motte Picquet",
+						"id": "13"
+					},
+					{
+						"label": "Emeriau - Zola",
+						"id": "54"
+					},
+					{
+						"label": "Georges Brassens",
+						"id": "24"
+					},
+					{
+						"label": "Pasteur - Montparnasse",
+						"id": "66"
+					},
+					{
+						"label": "Saint-Lambert",
+						"id": "62"
+					},
+					{
+						"label": "Vaugirard - Parc Des Expositions",
+						"id": "7"
+					},
+					{
+						"label": "Violet - Commerce",
+						"id": "61"
+					}
+				]
+			},
+			"16": {
+				"label": "(16e) Passy",
+				"districts": [
+					{
+						"label": "Auteuil Nord",
+						"id": "12"
+					},
+					{
+						"label": "Auteuil Sud",
+						"id": "6"
+					},
+					{
+						"label": "Chaillot",
+						"id": "44"
+					},
+					{
+						"label": "Muette Nord",
+						"id": "32"
+					},
+					{
+						"label": "Muette Sud",
+						"id": "39"
+					},
+					{
+						"label": "Porte Dauphine",
+						"id": "21"
+					}
+				]
+			},
+			"17": {
+				"label": "(17e) Batignolles-Monceau",
+				"districts": [
+					{
+						"label": "Batignolles - Cardinet",
+						"id": "29"
+					},
+					{
+						"label": "Champerret - Berthier",
+						"id": "65"
+					},
+					{
+						"label": "Courcelles - Wagram",
+						"id": "37"
+					},
+					{
+						"label": "Epinettes - Bessieres",
+						"id": "67"
+					},
+					{
+						"label": "La Fourche - Guy Moquet",
+						"id": "38"
+					},
+					{
+						"label": "Legendre - Levis",
+						"id": "63"
+					},
+					{
+						"label": "Pereire - Malesherbes",
+						"id": "43"
+					},
+					{
+						"label": "Ternes - Maillot",
+						"id": "42"
+					}
+				]
+			},
+			"18": {
+				"label": "(18e) Buttes Montmartre",
+				"districts": [
+					{
+						"label": "Amiraux - Simplon - Poissonniers",
+						"id": "75"
+					},
+					{
+						"label": "Charles Hermite - Evangile",
+						"id": "90"
+					},
+					{
+						"label": "Clignancourt - Jules Joffrin",
+						"id": "5"
+					},
+					{
+						"label": "Goutte D'Or - Chateau Rouge",
+						"id": "17"
+					},
+					{
+						"label": "Grandes Carrieres - Clichy",
+						"id": "15"
+					},
+					{
+						"label": "La Chapelle - Marx Dormoy",
+						"id": "35"
+					},
+					{
+						"label": "Montmartre",
+						"id": "10"
+					},
+					{
+						"label": "Moskowa - Porte Montmartre - Porte De Clignancourt",
+						"id": "74"
+					}
+				]
+			},
+			"19": {
+				"label": "(19e) Buttes Chaumont",
+				"districts": [
+					{
+						"label": "Bas Belleville",
+						"id": "81"
+					},
+					{
+						"label": "Bassin De La Villette",
+						"id": "51"
+					},
+					{
+						"label": "Buttes Chaumont",
+						"id": "78"
+					},
+					{
+						"label": "Danube",
+						"id": "69"
+					},
+					{
+						"label": "Flandre - Aubervilliers",
+						"id": "23"
+					},
+					{
+						"label": "Manin - Jaures",
+						"id": "33"
+					},
+					{
+						"label": "Place Des Fetes",
+						"id": "71"
+					},
+					{
+						"label": "Pont De Flandre",
+						"id": "34"
+					},
+					{
+						"label": "Porte Des Lilas",
+						"id": "105"
+					},
+					{
+						"label": "Secretan",
+						"id": "47"
+					}
+				]
+			},
+			"20": {
+				"label": "(20e) Ménilmontant",
+				"districts": [
+					{
+						"label": "Amandiers",
+						"id": "82"
+					},
+					{
+						"label": "Belleville",
+						"id": "25"
+					},
+					{
+						"label": "Gambetta",
+						"id": "3"
+					},
+					{
+						"label": "Pere Lachaise - Reunion",
+						"id": "28"
+					},
+					{
+						"label": "Plaine - Lagny",
+						"id": "55"
+					},
+					{
+						"label": "Saint-Blaise",
+						"id": "27"
+					},
+					{
+						"label": "Telegraphe - Pelleport - Saint-Fargeau",
+						"id": "4"
+					}
+				]
+			}
+		}
 	};
 
 /***/ },

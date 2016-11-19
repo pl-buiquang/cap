@@ -13,8 +13,8 @@ const position = [48.8566, 2.3522];
 //     shadowAnchor: [22, 94]
 // });
 
-const marker = ({ lat, lon, name, adress }) => (
-  <Marker key={`${name}${lat}${lon}`} position={[parseFloat(lat), parseFloat(lon)]} >
+const marker = ({ lat, lng, name, adress }) => (
+  <Marker key={`${name}${lat}${lng}`} position={[parseFloat(lat), parseFloat(lng)]} >
     <Popup>
       <span>{name}<br/>{adress}</span>
     </Popup>
