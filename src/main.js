@@ -5,33 +5,20 @@ import store from 'createStore.js';
 import MapPage from './components/MapPage';
 
 const MOUNT_NODE = document.getElementById('root');
-const __DEV__ = true;
+const __DEV__ = false;
 
-let render = () => {
+const render = (nodeId = MOUNT_NODE) => {
   ReactDOM.render(
     <Provider store={store}>
       <MapPage />
     </Provider>,
-    MOUNT_NODE
+    nodeId
   );
 };
 
-if (__DEV__) {
-  if (module.hot) {
-    const renderApp = render;
-    const renderError = (error) => {
-      const RedBox = require('redbox-react').default; // eslint-disable-line
-      ReactDOM.render(<RedBox error={error} />, MOUNT_NODE);
-    };
 
-    render = () => {
-      try {
-        renderApp();
-      } catch (error) {
-        renderError(error);
-      }
-    };
-  }
-}
-
+// remove this for production lib bundle
 render();
+
+export default render;
+

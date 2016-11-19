@@ -24,7 +24,7 @@ module.exports = {
       template: './src/index.html',
       hash: false,
       filename: 'index.html',
-      favicon: './src/static/favicon.ico',
+//      favicon: './src/static/favicon.ico',
       inject: 'body',
       minify: {
         collapseWhitespace: true,
@@ -43,6 +43,6 @@ module.exports = {
       test: /\.js$/,
       loaders: ['babel'],
       include: path.join(__dirname, 'src')
-    }]
+    },{ test: /\.json$/, loader: 'json' },]
   }
 };
