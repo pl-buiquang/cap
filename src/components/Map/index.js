@@ -1,6 +1,6 @@
 import React from 'react';
-import { Map, Marker, Popup, TileLayer } from 'react-leaflet';
-import config from '../../config.json';
+import { Map, Marker, Popup, TileLayer, MapComponent } from 'react-leaflet';
+import config from 'config.json';
 
 const position = [48.8566, 2.3522];
 const marker = ({ lat, lon, name, adress }) => (
@@ -11,10 +11,7 @@ const marker = ({ lat, lon, name, adress }) => (
   </Marker>
 );
 
-class CapMap extends React.Component {
-  static propTypes = {
-
-  }
+class CapMap extends MapComponent {
 
   render(){
     const {actors = []} = this.props;
@@ -26,7 +23,7 @@ class CapMap extends React.Component {
         />
         {actors && actors.map(marker)}
       </Map>
-    );    
+    );
   }
 }
 
