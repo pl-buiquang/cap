@@ -34,7 +34,7 @@ const Handlers = {
       ...state,
       actors: actors.map(({ adresse_initiative, long_initiative, lat_initiative, nom_initiative }) => ({
         adress: adresse_initiative,
-        lon: long_initiative,
+        lng: long_initiative,
         lat: lat_initiative,
         name: nom_initiative,
       })),

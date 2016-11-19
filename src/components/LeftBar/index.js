@@ -1,11 +1,24 @@
 import React from 'react';
 
-export default ({ actors }) => (
+const filterActorsByViewport = ({ ne, sw }, { lat, lng }) => {
+  const top = (ne.lat < parseFloat(lat));
+  const bottom = (parseFloat(lat) > sw.lat);
+  const right = (parseFloat(lng) < ne.lng);
+  const left = (parseFloat(lng) > sw.lng);
+
+  const horizontal = (top && bottom);
+  const vertical = (right && left);
+  return (horizontal && vertical);
+};
+
+export default ({ actors, bounds }) => (
   actors &&
-  <div>{actors.map(({ name, adress}) => (
+  <div>{actors.filter((a) => filterActorsByViewport(bounds, a)).map(({ name, adress }) => (
       <div key={`${name}${adress}`}>
+        {console.log(actors.filter((a) => filterActorsByViewport(bounds, a)).length)}
         <h2>{name}</h2>
         <h3>{adress}</h3>
       </div>
     ))}
-  </div>) || <h1>No results</h1>;
+  </div>
+) || <h1>No results</h1>;
