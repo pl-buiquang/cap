@@ -1,7 +1,4 @@
-import algolia from 'algoliasearch';
-
-const algoliaIndex = algolia("G2ONO6HNX2", 'bb08f70d51214d668d8c761ec243c677').initIndex('alternatives');
-const search = (query) => algoliaIndex.search(query, { hitsPerPage: 3000 });
+import {search} from './services/alternatives.js';
 
 const queries = {};
 export const updateActors = actors => ({ type: 'UPDATE_ACTORS', payload: actors });
@@ -32,7 +29,9 @@ const Handlers = {
   UPDATE_ACTORS: (state, actors) =>
     ({
       ...state,
-      actors: actors.map(({ adresse_initiative, long_initiative, lat_initiative, nom_initiative }) => ({
+      actors: actors.map(({ adresse_initiative, long_initiative, lat_initiative, nom_initiative, id_typologie, id, objectID }) => ({
+        id: id || objectID,
+        typo: id_typologie,
         adress: adresse_initiative,
         lng: long_initiative,
         lat: lat_initiative,

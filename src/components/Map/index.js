@@ -1,25 +1,11 @@
 import React, { Component } from 'react';
 import { Map, Marker, Popup, TileLayer } from 'react-leaflet';
 import config from 'config.json';
+import CapMarker from './Marker';
 
 const position = [48.8566, 2.3522];
 
-// const icon = L.icon({
-//     iconUrl: '/static/img/typologEconomie-partagee-et-finance-solidaire_small.png',
-//     iconSize: [38, 95],
-//     iconAnchor: [22, 94],
-//     popupAnchor: [-3, -76],
-//     shadowSize: [68, 95],
-//     shadowAnchor: [22, 94]
-// });
 
-const marker = ({ lat, lng, name, adress }) => (
-  <Marker key={`${name}${lat}${lng}`} position={[parseFloat(lat), parseFloat(lng)]} >
-    <Popup>
-      <span>{name}<br/>{adress}</span>
-    </Popup>
-  </Marker>
-);
 
 class CapMap extends Component {
   componentDidMount() {
@@ -35,7 +21,7 @@ class CapMap extends Component {
             url={config['tileLayerURL']}
             attribution='<a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"http://mapbox.com\">Mapbox</a>'
       />
-      {actors && actors.map(marker)}
+      {actors && actors.map((actor) => <CapMarker key={actor.id} actor={actor}/>)}
       </Map>
     );
   }

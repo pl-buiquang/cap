@@ -1,12 +1,13 @@
 {
+  "dataProvider":"mock",
   "tileLayerURL": "https://api.mapbox.com/v4/mapbox.streets/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiYnVpcXVhbmciLCJhIjoiNWE5NzUyZjNiYjliNWI1MGQxNGY0Nzc0NjE3ZTYwOTIifQ.lso1FxqtSY256Po3t4oKJA",
   "typology": [
     {
       "label": "Alimentation et agricultures locales",
       "color": "#6AA426",
       "img": {
-        "small": "/static/img/typologies/Alimentation-et-agricultures-locales.png",
-        "big": "/static/img/typologies/Alimentation-et-agricultures-locales_small.png"
+        "big": "/static/img/typologies/Alimentation-et-agricultures-locales.png",
+        "small": "/static/img/typologies/Alimentation-et-agricultures-locales_small.png"
       },
       "id": "1",
       "url": null
@@ -15,8 +16,8 @@
       "label": "Culture",
       "color": "#D36CA8",
       "img": {
-        "small": "/static/img/typologies/Cultures-et-loisirs.png",
-        "big": "/static/img/typologies/Cultures-et-loisirs_small.png"
+        "big": "/static/img/typologies/Cultures-et-loisirs.png",
+        "small": "/static/img/typologies/Cultures-et-loisirs_small.png"
       },
       "id": "2",
       "url": null
@@ -25,8 +26,8 @@
       "label": "Economie - Travail",
       "color": "#3576BB",
       "img": {
-        "small": "/static/img/typologies/Economie-partagee-et-finance-solidaire.png",
-        "big": "/static/img/typologies/Economie-partagee-et-finance-solidaire_small.png"
+        "big": "/static/img/typologies/Economie-partagee-et-finance-solidaire.png",
+        "small": "/static/img/typologies/Economie-partagee-et-finance-solidaire_small.png"
       },
       "id": "4",
       "url": null
@@ -35,8 +36,8 @@
       "label": "Education",
       "color": "#EF7D00",
       "img": {
-        "small": "/static/img/typologies/Education-populaire-et-pedagogies-alternatives.png",
-        "big": "/static/img/typologies/Education-populaire-et-pedagogies-alternatives_small.png"
+        "big": "/static/img/typologies/Education-populaire-et-pedagogies-alternatives.png",
+        "small": "/static/img/typologies/Education-populaire-et-pedagogies-alternatives_small.png"
       },
       "id": "5",
       "url": null
@@ -45,8 +46,8 @@
       "label": "Démocratie et Médias",
       "color": "#FF0000",
       "img": {
-        "small": "/static/img/typologies/Expertise-et-parole-citoyennes.png",
-        "big": "/static/img/typologies/Expertise-et-parole-citoyennes_small.png"
+        "big": "/static/img/typologies/Expertise-et-parole-citoyennes.png",
+        "small": "/static/img/typologies/Expertise-et-parole-citoyennes_small.png"
       },
       "id": "6",
       "url": null
@@ -55,8 +56,8 @@
       "label": "Logement - Urbanisme",
       "color": "#B2B2B2",
       "img": {
-        "small": "/static/img/typologies/Logement.png",
-        "big": "/static/img/typologies/Logement_small.png"
+        "big": "/static/img/typologies/Logement.png",
+        "small": "/static/img/typologies/Logement_small.png"
       },
       "id": "8",
       "url": null
@@ -65,8 +66,8 @@
       "label": "Réemploi - Technologies libres - DIY",
       "color": "#845227",
       "img": {
-        "small": "/static/img/typologies/Recuperation-et-creation.png",
-        "big": "/static/img/typologies/Recuperation-et-creation_small.png"
+        "big": "/static/img/typologies/Recuperation-et-creation.png",
+        "small": "/static/img/typologies/Recuperation-et-creation_small.png"
       },
       "id": "10",
       "url": null
@@ -75,8 +76,8 @@
       "label": "Santé",
       "color": "#14905d",
       "img": {
-        "small": "/static/img/typologies/Sante.png",
-        "big": "/static/img/typologies/Sante_small.png"
+        "big": "/static/img/typologies/Sante.png",
+        "small": "/static/img/typologies/Sante_small.png"
       },
       "id": "24",
       "url": null
@@ -85,8 +86,8 @@
       "label": "Energie et Transports",
       "color": "#ffdd44",
       "img": {
-        "small": "/static/img/typologies/energie.png",
-        "big": "/static/img/typologies/energie_small.png"
+        "big": "/static/img/typologies/energie.png",
+        "small": "/static/img/typologies/energie_small.png"
       },
       "id": "25",
       "url": null
