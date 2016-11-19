@@ -4,7 +4,7 @@ import Map from 'components/Map';
 import LeftBar from 'components/LeftBar';
 import * as actionCreators from 'rootReducer';
 
-class MapPage extends Component {
+class App extends Component {
   componentDidMount() {
     this.props.searchActors('*');
   }
@@ -28,4 +28,4 @@ const mapStateToProps = state => ({
   bounds: state.bounds,
 });
 
-export default connect(mapStateToProps, actionCreators)(MapPage);
+export default connect(mapStateToProps, actionCreators)(App);
