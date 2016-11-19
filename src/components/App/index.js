@@ -10,7 +10,7 @@ const extractBounds = bounds => {
   return { sw, ne };
 };
 
-class MapPage extends Component {
+class App extends Component {
   componentDidMount() {
     this.props.searchActors('*');
   }
@@ -35,4 +35,4 @@ const mapStateToProps = state => ({
   bounds: extractBounds(state.bounds),
 });
 
-export default connect(mapStateToProps, actionCreators)(MapPage);
+export default connect(mapStateToProps, actionCreators)(App);
