@@ -1,5 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
+import store from 'createStore.js';
 import MapPage from './components/MapPage';
 
 const MOUNT_NODE = document.getElementById('root');
@@ -7,7 +9,9 @@ const __DEV__ = true;
 
 let render = () => {
   ReactDOM.render(
-    <MapPage />,
+    <Provider store={store}>
+      <MapPage />
+    </Provider>,
     MOUNT_NODE
   );
 };
