@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default ({ actors = [] }) => (
+export default ({ actors }) => (
   actors &&
   <div>{actors.map(({ name, adress}) => (
       <div key={`${name}${adress}`}>

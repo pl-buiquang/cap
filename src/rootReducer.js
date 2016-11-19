@@ -9,6 +9,7 @@ export const updateBounds = bounds => ({ type: 'UPDATE_BOUNDS', payload: bounds 
 export const searchActors = query => dispatch => {
   if (queries[query]) {
     dispatch(updateActors(queries[query]));
+    return;
   }
   search(query)
    .then(data => {
