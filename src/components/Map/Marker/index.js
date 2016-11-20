@@ -8,6 +8,12 @@ class CapMarker extends Component {
     actor: React.PropTypes.object,
   }
 
+  componentDidUpdate() {
+    if (this.props.focused) {
+      this.refs.marker.leafletElement.openPopup();  
+    }
+  }
+
   getIcon = (typoId) => {
     const typology = config["typology"];
     const typoInfo = typology.find(t => t.id == typoId);
@@ -15,7 +21,7 @@ class CapMarker extends Component {
     if (!typoInfo) {
       console.log(typoId);
       console.log(this.props.actor);
-      return L.icon.Default;
+      return new L.Icon.Default();
     }
     return L.icon({
       iconUrl: typoInfo["img"]["small"],
@@ -36,7 +42,7 @@ class CapMarker extends Component {
   render() {
     const {typo, lng, lat, adress} = this.props.actor;
     return (
-      <Marker position={[parseFloat(lat), parseFloat(lng)]} icon={this.getIcon(typo)}>
+      <Marker position={[parseFloat(lat), parseFloat(lng)]} icon={this.getIcon(typo)} ref={"marker"}>
         <Popup>
           {this.renderPopup()}
         </Popup>

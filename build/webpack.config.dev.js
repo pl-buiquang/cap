@@ -38,6 +38,10 @@ module.exports = {
       test: /\.(js|jsx)$/,
       exclude: /node_modules/,
       loader: 'babel',
-    },{ test: /\.json$/, loader: 'json' },]
+    },{ test: /\.json$/, loader: 'json' },
+    {
+      test: /.css$/,
+      loader: 'style-loader!css-loader',
+    },]
   }
 };

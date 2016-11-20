@@ -43,6 +43,10 @@ module.exports = {
       test: /\.js$/,
       loaders: ['babel'],
       include: path.join(__dirname, 'src')
-    },{ test: /\.json$/, loader: 'json' },]
+    },{ test: /\.json$/, loader: 'json' },
+    {
+      test: /.css$/,
+      loader: 'style-loader!css-loader',
+    },]
   }
 };
