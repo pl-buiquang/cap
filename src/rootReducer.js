@@ -8,6 +8,7 @@ export const selectDistrict = districtId => ({ type: 'FILTER_DISTRICT', payload:
 export const selectTypos = typoList => ({ type: 'FILTER_TYPOS', payload: typoList});
 export const focusActor = actorId => ({ type: 'FOCUS_ACTOR', payload: actorId});
 export const openActor = actorId => ({ type: 'OPEN_ACTOR', payload: actorId});
+export const setMapRef = mapRef => ({ type: 'SET_MAP_REF', payload: mapRef});
 export const searchActors = query => dispatch => {
   if (queries[query]) {
     dispatch(updateActors(queries[query]));
@@ -34,6 +35,7 @@ const initialState = {
   },
   actorView: null,
   actorMapFocus: null,
+  mapRef: null,
 };
 
 const Handlers = {
@@ -54,9 +56,10 @@ const Handlers = {
     }),
   FILTER_TYPOS: (state, typoList) => ({...state, filters: {...state.filters, typos: typoList,}}),
   FILTER_DISTRICT: (state, districtId) => ({...state, filters: {...state.filters, district: districtId,}}),
-  FILTER_ZONE: (state, zoneId) => ({...state, filters: {...state.filters, zone: zoneId,}}),
+  FILTER_ZONE: (state, zoneId) => ({...state, filters: {...state.filters, zone: zoneId, district: '0'}}),
   OPEN_ACTOR: (state, actorId) => ({...state, actorView: actorId}),
   FOCUS_ACTOR: (state, actorId) => ({...state, actorMapFocus: actorId}),
+  SET_MAP_REF: (state, mapRef) => ({...state, mapRef}),
 };
 
 export default function(state = initialState, action) {

@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
 import Select from 'react-select';
 import 'react-select/dist/react-select.css';
-import config from 'config.json'; 
+import config from 'config.json';
+import * as Zones from '../../../utils/zones.js';
+import * as Districts from '../../../utils/districts.js';
+
 
 class SearchPanel extends Component {
   static propTypes = {
@@ -13,6 +16,11 @@ class SearchPanel extends Component {
     selectedTypos: React.PropTypes.array,
     selectedZone: React.PropTypes.string,
     selectedDistrict: React.PropTypes.string,
+    mapRef: React.PropTypes.object,
+  }
+
+  state = {
+    shownLocation: null,
   }
 
   getArrondOpts() {
@@ -37,6 +45,38 @@ class SearchPanel extends Component {
     }
   }
 
+  mapShowLocation = (e, locationType, locationId) => {
+    e.stopPropagation();
+    if (!this.props.mapRef) {
+      return;
+    }
+    console.log(this.props.mapRef);
+    console.log(locationId);
+    if (this.state.shownLocation) {
+      this.props.mapRef.removeLayer(this.state.shownLocation);
+    }
+    if (locationId !== '0') {
+      const locationLayer = L.polygon(locationType[`latlongs${locationId}`],{
+          color:locationType['color']
+        }).addTo(this.props.mapRef);
+      this.setState({
+        shownLocation: locationLayer,
+      });
+    } else {
+      this.setState({
+        shownLocation: null,
+      });
+    }
+  }
+
+  renderOption = type => option => {
+    return (
+      <div onMouseEnter={(e) => this.mapShowLocation(e, type, option.value)} onMouseLeave={(e) => this.mapShowLocation(e, type, '0')}>
+        {option.label}
+      </div>
+    );
+  }
+
   renderTypoSelector = () => {
     const {selectedTypos} = this.props;
     return (
@@ -56,12 +96,14 @@ class SearchPanel extends Component {
           searchable={false}
           value={selectedZone}
           options={this.getArrondOpts()}
+          optionRenderer={this.renderOption(Zones)}
           onChange={({value}) => this.props.selectZone(value)}/>
         {selectedZone !== "0" ? 
           <Select
             searchable={false}
             value={selectedDistrict}
             options={this.getDistrictOpts(selectedZone)}
+            optionRenderer={this.renderOption(Districts)}
             onChange={({value}) => this.props.selectDistrict(value)}/> : null
         }
         {this.renderTypoSelector()}

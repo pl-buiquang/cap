@@ -34,6 +34,7 @@ class App extends Component {
             actorView={this.props.actorView}
             actorMapFocus={this.props.actorMapFocus}
             closeActor={() => this.props.openActor(null)}
+            setMapRef={this.props.setMapRef}
             filters={{zone: this.props.selectedZone, district: this.props.selectedDistrict}}/>
         </div>
       </div>
@@ -49,6 +50,7 @@ const mapStateToProps = state => ({
   selectedDistrict: state.filters.district,
   actorView: state.actorView,
   actorMapFocus: state.actorMapFocus,
+  mapRef: state.mapRef,
 });
 
 export default connect(mapStateToProps, actionCreators)(App);

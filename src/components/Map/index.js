@@ -19,6 +19,11 @@ class CapMap extends Component {
     const lMap = this.refs.map.leafletElement;
     lMap.on('moveend', () => this.props.updateBounds(lMap.getBounds()));
     this.props.updateBounds(lMap.getBounds());
+    this.props.setMapRef(lMap);
+  }
+
+  componentWillUnmount = () => {
+    this.props.setMapRef(null);
   }
 
   renderActor = (actor) => {
