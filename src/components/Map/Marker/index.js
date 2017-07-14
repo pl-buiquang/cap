@@ -1,7 +1,38 @@
 import React, { Component } from 'react';
 import { Map, Marker, Popup, TileLayer } from 'react-leaflet';
-import config from 'config.json';
+import config from 'utils/config.js';
 
+
+const getIcon = (typoId) => {
+  const configData = config();
+  const typology = configData["typology"];
+  const typoInfo = typology.find(t => t.id == typoId);
+  // TODO check if not found ! + add default icon
+  if (!typoInfo) {
+    return new L.Icon.Default();
+  }
+  return L.icon({
+    iconUrl: typoInfo["img"]["small"],
+    iconSize:     [26, 26], 
+    iconAnchor:   [13, 13], 
+    popupAnchor:  [-13, -13], 
+    className:`typo-${typoId}`,
+  });
+}
+
+
+export const getActorMarker = (actor) => {
+  const {typo, lng, lat, adress, name} = actor;
+  return {
+    lat: parseFloat(lat),
+    lng: parseFloat(lng),
+    options: {
+      icon: getIcon(typo),
+      id: actor.id,
+    },
+    popup: `<span>${name}<br/>${adress}</span>`,
+  }
+}
 
 class CapMarker extends Component {
   static propTypes = {
@@ -14,35 +45,18 @@ class CapMarker extends Component {
     }
   }
 
-  getIcon = (typoId) => {
-    const typology = config["typology"];
-    const typoInfo = typology.find(t => t.id == typoId);
-    // TODO check if not found ! + add default icon
-    if (!typoInfo) {
-      console.log(typoId);
-      console.log(this.props.actor);
-      return new L.Icon.Default();
-    }
-    return L.icon({
-      iconUrl: typoInfo["img"]["small"],
-      iconSize:     [26, 26], 
-      iconAnchor:   [13, 13], 
-      popupAnchor:  [-13, -13], 
-      className:`typo-${typoId}`,
-    });
-  }
 
   renderPopup = () => {
     const {name, adress} = this.props.actor;
     return (
-      <span>{name}<br/>{adress}</span>
+      <span>{name}<br/>{adress}<div onClick={this.props.actor}>more</div></span>
     );
   }
 
   render() {
     const {typo, lng, lat, adress} = this.props.actor;
     return (
-      <Marker position={[parseFloat(lat), parseFloat(lng)]} icon={this.getIcon(typo)} ref={"marker"}>
+      <Marker position={[parseFloat(lat), parseFloat(lng)]} icon={getIcon(typo)} ref={"marker"}>
         <Popup>
           {this.renderPopup()}
         </Popup>

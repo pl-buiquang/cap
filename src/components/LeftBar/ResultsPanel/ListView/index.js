@@ -4,16 +4,26 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 
 class ListView extends React.Component {
 
-  componentDid
+  setPerfectScrollBar = (el) => {
+    this.perfectScrollBarRef = el;
+  }
+
+  componentWillReceiveProps(newProps){
+    if (this.perfectScrollBarRef && newProps.actors.length !== this.props.actors.length) {
+      this.perfectScrollBarRef.setScrollTop(0);
+    }
+  }
 
   render() {
     const {actors} = this.props;
     return (
-      <div style={{height: '300px'}}>
-        <div className="tmp-hightlight">Sorting / Show only starred / ...</div>
-        <PerfectScrollbar>
-          {actors.map((a) => <ResultView key={a.id} actor={a} focus={this.props.focus} open={this.props.open}/>)}
-        </PerfectScrollbar>
+      <div>
+        <div style={{height: '600px', overflow: 'hidden'}}>
+          <PerfectScrollbar ref={this.setPerfectScrollBar}>
+            {actors.map((a) => <ResultView key={a.id} actor={a} focus={this.props.focus} open={this.props.open}/>)}
+          </PerfectScrollbar>
+        </div>
+        <div style={{color: '#fff'}}>{`Total : ${actors.length}`}</div>
       </div>
     );
   }

@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { Map, Marker, Popup, TileLayer } from 'react-leaflet';
-import config from 'config.json';
-import CapMarker from './Marker';
+import config from 'utils/config.js';
+import {CapMarker, getActorMarker} from './Marker';
 import FullView from '../Alternative/FullView';
+import MarkerClusterGroup from 'react-leaflet-markercluster';
 
 class CapMap extends Component {
   static propTypes = {
@@ -13,17 +14,45 @@ class CapMap extends Component {
     actorView: React.PropTypes.string,
     actorMapFocus: React.PropTypes.string,
     closeActor: React.PropTypes.func,
+    openActor: React.PropTypes.func,
+    defaultLocation: React.PropTypes.array,
   }
 
+  latestPosition = null;
+
   componentDidMount = () => {
-    const lMap = this.refs.map.leafletElement;
-    lMap.on('moveend', () => this.props.updateBounds(lMap.getBounds()));
-    this.props.updateBounds(lMap.getBounds());
-    this.props.setMapRef(lMap);
+  }
+
+  componentWillReceiveProps(newProps){
+    if(this.props.defaultLocation && !newProps.defaultLocation){
+      this.latestPosition = null;
+      this.latestZoom = null;
+    }
   }
 
   componentWillUnmount = () => {
     this.props.setMapRef(null);
+  }
+
+  setMapRef = (mapRef) => {
+    const {actorView = null} = this.props;
+    if (!actorView && mapRef && mapRef.leafletElement != this.mapRef) {
+      const lMap = mapRef.leafletElement;
+      lMap.on('moveend', () => {
+        this.props.updateBounds(lMap.getBounds());
+      });
+      this.props.updateBounds(lMap.getBounds());
+      this.props.setMapRef(lMap);
+      this.mapRef = lMap;      
+    }
+  }
+
+  setLatestPosition = () => {
+    if (this.mapRef) {
+      const pos = this.mapRef.getCenter();
+      this.latestPosition = [pos.lat, pos.lng];
+      this.latestZoom = this.mapRef.getZoom();
+    }
   }
 
   renderActor = (actor) => {
@@ -32,22 +61,57 @@ class CapMap extends Component {
     );
   }
 
+  renderMarkers = () => {
+    const {actors = [], filters, position} = this.props;
+    return (
+      <MarkerClusterGroup
+        wrapperOptions={{
+          enableDefaultStyle: true,
+        }}
+        options={{
+          showCoverageOnHover: false,
+        }}
+        onMarkerClick={(m) => this.props.openActor(m.options.id)}
+        markers=
+          {actors && actors.map((actor) => (
+            getActorMarker(actor)
+          ))}
+      />);
+  }
+
+  renderMarkers0 = () => {
+    const {actors = [], filters, position} = this.props;
+    return (actors && actors.map((actor) => (
+          <CapMarker 
+            key={actor.id} 
+            actor={actor} 
+            focused={actor.id === this.props.actorView || (!this.props.actorView && actor.id === this.props.actorMapFocus)}
+              />))
+        );
+  }
+
   renderMap = (height, overridePosition = null) => {
     const {actors = [], filters, position} = this.props;
-    console.log(overridePosition);
+    const configData = config();
+    if (overridePosition && overridePosition != this.latestPosition) {
+      this.setLatestPosition();
+    }
+    let zoom = overridePosition ? 17 : (this.latestZoom || (this.props.defaultLocation ? 15 :  12));
     return (
-      <Map center={overridePosition || position} zoom={13} style={{height: height}}  ref="map" >
+      <Map 
+        center={overridePosition || this.latestPosition || this.props.defaultLocation || configData["defaultMapPosition"]}
+        zoom={zoom}
+        style={{height: height}} 
+        ref={mapRef => this.setMapRef(mapRef)}
+        maxZoom={17}
+        minZoom={9}
+        maxBounds={[[48.288675734823855, 0.8404541015625001],[49.37343174238158, 3.8726806640625004]]}
+      >
         <TileLayer
-            url={config['tileLayerURL']}
+            url={configData['tileLayerURL']}
             attribution='<a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"http://mapbox.com\">Mapbox</a>'
       />
-      {actors && actors.map((actor) => (
-        <CapMarker 
-          key={actor.id} 
-          actor={actor} 
-          focused={actor.id === this.props.actorView || (!this.props.actorView && actor.id === this.props.actorMapFocus)}
-            />))
-      }
+        {this.renderMarkers()}
       </Map>
     );
   }

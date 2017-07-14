@@ -5,5 +5,5 @@
       "presets": ["react-hmre"]
     }
   },
-  "plugins": ["babel-plugin-add-module-exports"]
+  "plugins": ["babel-plugin-add-module-exports", "transform-runtime"]
 }

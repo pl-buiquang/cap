@@ -18,7 +18,7 @@ const render = (nodeId = MOUNT_NODE) => {
 
 
 // remove this for production lib bundle
-render();
+//render();
 
 export default render;
 

@@ -2,39 +2,43 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Map from 'components/Map';
 import LeftBar from 'components/LeftBar';
+import SearchPanel from 'components/LeftBar/SearchPanel';
 import * as actionCreators from 'rootReducer';
 import {filterActors, filterActorsByViewport} from 'utils/utils';
-import config from 'config.json';
+import config from 'utils/config.js';
 import '../../../static/style/style.css';
 
 const extractBounds = bounds => {
-  const ne = bounds.getNorthEast && bounds.getNorthEast();
-  const sw = bounds.getNorthEast && bounds.getSouthWest();
+  const ne = bounds._northEast;
+  const sw = bounds._southWest;
   return { sw, ne };
 };
 
 class App extends Component {
   componentDidMount() {
-    this.props.searchActors('*');
+    this.props.searchActors('');
   }
   render() {
     // filter actors here OR actors are filtered already via search ?
     // add filterActorsByViewport(this.props.bounds,a) to filter callback
-    const actors = this.props.actors.filter(a => filterActors(a, this.props));
+    const actors = this.props.actors.filter(a => filterActors(a, this.props)).filter(a => filterActorsByViewport(this.props.bounds, a));
+    const configData = config();
     return (
       <div style={{ width: '100%'}}>
-        <div style={{ width: '50%', float: 'left'}}>
+        <SearchPanel {...this.props} filteredActors={actors}/>
+        <div style={{ width: '40%', float: 'left'}}>
           <LeftBar {...this.props} filteredActors={actors} />
         </div>
-        <div style={{ width: '50%', float: 'right' }}>
+        <div style={{ width: '58%', float: 'right' }}>
           <Map
-            position={config["defaultMapPosition"]}
             actors={actors}
             updateBounds={this.props.updateBounds}
             actorView={this.props.actorView}
             actorMapFocus={this.props.actorMapFocus}
             closeActor={() => this.props.openActor(null)}
             setMapRef={this.props.setMapRef}
+            openActor={this.props.openActor}
+            defaultLocation={this.props.defaultLocation}
             filters={{zone: this.props.selectedZone, district: this.props.selectedDistrict}}/>
         </div>
       </div>
@@ -51,6 +55,7 @@ const mapStateToProps = state => ({
   actorView: state.actorView,
   actorMapFocus: state.actorMapFocus,
   mapRef: state.mapRef,
+  defaultLocation: state.defaultLocation,
 });
 
 export default connect(mapStateToProps, actionCreators)(App);

@@ -38,10 +38,16 @@ module.exports = {
       test: /\.(js|jsx)$/,
       exclude: /node_modules/,
       loader: 'babel',
+    },{
+      test: /\.(png|jpg|gif)$/,
+      loader: 'url-loader?limit=8192',
     },{ test: /\.json$/, loader: 'json' },
     {
       test: /.css$/,
       loader: 'style-loader!css-loader',
-    },]
+    },{
+      test: /\.(eot|svg|ttf|woff|woff2|otf)$/,
+      loader: 'file-loader',
+    }]
   }
 };

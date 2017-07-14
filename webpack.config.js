@@ -2,7 +2,7 @@ var path = require('path');
 var webpack = require('webpack');
 
 module.exports = {
-	entry: [
+  entry: [
     './src/main'
   ],
   output: {
@@ -24,13 +24,13 @@ module.exports = {
         'BABEL_ENV': JSON.stringify('production'),
       }
     }),
-    // new webpack.optimize.UglifyJsPlugin({
-    //   compressor: {
-    //     unused: true,
-    //     dead_code: true,
-    //     warnings: false
-    //   }
-    // })
+    new webpack.optimize.UglifyJsPlugin({
+      compressor: {
+        unused: true,
+        dead_code: true,
+        warnings: false
+      }
+    })
   ],
   module: {
     loaders: [{
@@ -38,11 +38,18 @@ module.exports = {
       loaders: ['babel'],
       include: path.join(__dirname, 'src')
     },
+    {
+      test: /\.(png|jpg|gif)$/,
+      loader: 'url-loader?limit=8192',
+    },
     { test: /\.json$/, loader: 'json' },
     {
       test: /.css$/,
       loader: 'style-loader!css-loader',
-    },
+    },{
+      test: /\.(eot|svg|ttf|woff|woff2|otf)$/,
+      loader: 'file-loader',
+    }
     ]
   }
 }
