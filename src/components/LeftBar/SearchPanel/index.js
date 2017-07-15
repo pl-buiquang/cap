@@ -96,6 +96,7 @@ const style_typo = (color, opacity='1') => ({
   justifyContent: 'flexStart',
 //  padding: '4px',
   margin: '10px',
+  fontFamily: 'Open Sans',
   cursor: 'pointer',
   borderRadius: '32px 0 0 32px',
 });
@@ -175,7 +176,8 @@ class SearchPanel extends Component {
               className="cap-carto-typo-select"
               style={{
                 ...(style_typo(typo["color"], opacity)), 
-                ...(opacity === '0.25' ? {boxShadow: '0px 6px 10px rgba(0,0,0,0.2)'} : {})
+                ...(opacity === '0.25' ? {boxShadow: '0px 6px 10px rgba(0,0,0,0.2)'} : {}),
+                ...({fontSize: `${(typo['label'].length > 30 ? '14' : '16')}px`})
               }}
             >
               <div style={{...STYLE_TYPO_IMAGE, backgroundImage: `url(${typoImg})`}} />
@@ -299,7 +301,7 @@ class SearchPanel extends Component {
           <div style={{display: 'flex', flexDirection: 'column'}}>
             <div className="cap-carto-typo-select" style={{...STYLE_BUTTON}} onClick={this.localizeMe}>
               <i className="fa fa-location-arrow" aria-hidden="true" style={{fontSize: '30px'}}></i>
-              <div style={{marginLeft: '10px'}}>Près de ma position</div>
+              <div style={{marginLeft: '10px', fontSize: '15px'}}>Près de ma position</div>
             </div>
             <div className="cap-carto-typo-select" style={{...STYLE_BUTTON}} onClick={this.showRandom}>
               <div style={{backgroundImage: `url(${rollingDices})`, width: '30px', height: '30px'}} />

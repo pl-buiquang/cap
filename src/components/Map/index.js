@@ -20,6 +20,23 @@ class CapMap extends Component {
 
   latestPosition = null;
 
+  state = {
+    zoomEnabled: false,
+  }
+
+  enableZoom = () => {
+    const {zoomEnabled} = this.state;
+    if (!zoomEnabled) {
+      this.setState({
+        zoomEnabled: true,
+      }, () => {
+        if(this.mapRef){
+          this.mapRef.scrollWheelZoom.enable();
+        }
+      });      
+    }
+  }
+
   componentDidMount = () => {
   }
 
@@ -38,12 +55,13 @@ class CapMap extends Component {
     const {actorView = null} = this.props;
     if (!actorView && mapRef && mapRef.leafletElement != this.mapRef) {
       const lMap = mapRef.leafletElement;
-      lMap.on('moveend', () => {
-        this.props.updateBounds(lMap.getBounds());
-      });
       this.props.updateBounds(lMap.getBounds());
       this.props.setMapRef(lMap);
       this.mapRef = lMap;      
+      lMap.on('moveend', () => {
+        this.props.updateBounds(lMap.getBounds());
+        this.enableZoom();
+      });
     }
   }
 
@@ -92,6 +110,7 @@ class CapMap extends Component {
 
   renderMap = (height, overridePosition = null) => {
     const {actors = [], filters, position} = this.props;
+    const {zoomEnabled} = this.state;
     const configData = config();
     if (overridePosition && overridePosition != this.latestPosition) {
       this.setLatestPosition();
@@ -101,10 +120,12 @@ class CapMap extends Component {
       <Map 
         center={overridePosition || this.latestPosition || this.props.defaultLocation || configData["defaultMapPosition"]}
         zoom={zoom}
+        onClick={this.enableZoom}
         style={{height: height}} 
         ref={mapRef => this.setMapRef(mapRef)}
         maxZoom={17}
         minZoom={9}
+        scrollWheelZoom={zoomEnabled}
         maxBounds={[[48.288675734823855, 0.8404541015625001],[49.37343174238158, 3.8726806640625004]]}
       >
         <TileLayer
