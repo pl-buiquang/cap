@@ -146,7 +146,7 @@ class FullView extends React.Component {
             <div style={{width: '60%'}}>
               <div style={{fontFamily: 'Bebas Neue', fontSize: '36px', display: 'flex', justifyContent: 'center'}}><div>{actor.name}</div></div>
               <div style={{fontSize: '24px', fontStyle: 'italic', display: 'flex', justifyContent: 'center'}}><div>{actor.orga_initiative}</div></div>
-              <div className="alt-list-view-image" style={{...STYLE_IMAGE, backgroundImage: `url(${configData.baseURI+actor.presa_image}`}} />
+              <div className="alt-list-view-image" style={{...STYLE_IMAGE, backgroundImage: `url(${configData.baseURI+actor.presa_image})`}} />
               <div style={{fontSize: '14px'}}>{`Crédit photo : ${actor.credit_picto}`}</div>
               <div style={{fontSize: '20px'}}>{actor.lieu_initiative}</div>
               <div style={{fontSize: '20px'}}>{actor.contact_initiative}</div>

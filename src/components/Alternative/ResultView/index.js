@@ -70,7 +70,7 @@ class ResultView extends React.Component {
     return (
       <div style={STYLE_ALT_LIST_EXP_CONTAINER} className="alt-list-view" onClick={this.focus}>
         <div style={STYLE_ALT_LIST_EXP_LEFT}>
-          <div className="alt-list-view-image" style={{...STYLE_IMAGE, backgroundImage: `url(${configData.baseURI+this.props.actor.presa_image}`}} />
+          <div className="alt-list-view-image" style={{...STYLE_IMAGE, backgroundImage: `url(${configData.baseURI+this.props.actor.presa_image})`}} />
         </div>
         <div style={STYLE_ALT_LIST_EXP_RIGHT}>
           <div style={STYLE_HEADER}>
