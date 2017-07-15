@@ -85,16 +85,16 @@ const processWebsite = (website) => {
         url[4] = "http://"+url[4];
       }
       return (
-        <div>
+        <span>
           <a href={url[1]} target="_blank">{url[1]}</a><br />
           <a href={url[4]} target="_blank">{url[4]}</a><br />
-        </div>
+        </span>
       );
     }
     return (
-      <div>
+      <span>
         <a href={url[1]} target="_blank">{url[1]}</a><br />
-      </div>
+      </span>
     );
   }
   return website;
@@ -147,31 +147,46 @@ class FullView extends React.Component {
               <div style={{fontFamily: 'Bebas Neue', fontSize: '36px', display: 'flex', justifyContent: 'center'}}><div>{actor.name}</div></div>
               <div style={{fontSize: '24px', fontStyle: 'italic', display: 'flex', justifyContent: 'center'}}><div>{actor.orga_initiative}</div></div>
               <div className="alt-list-view-image" style={{...STYLE_IMAGE, backgroundImage: `url(${configData.baseURI+actor.presa_image})`}} />
-              <div style={{fontSize: '14px'}}>{`Crédit photo : ${actor.credit_picto}`}</div>
-              <div style={{fontSize: '20px'}}>{actor.lieu_initiative}</div>
-              <div style={{fontSize: '20px'}}>{actor.contact_initiative}</div>
+              {actor.credit_picto && <div style={{fontSize: '14px'}}>{`Crédit photo : ${actor.credit_picto}`}</div>}
+              {actor.lieu_initiative && <div style={{fontSize: '18px', marginTop: '10px',}}>{actor.lieu_initiative}</div>}
+              {actor.contact_initiative && <div style={{fontSize: '18px', marginTop: '10px'}}><b>Contact :</b> {actor.contact_initiative}</div>}
+              {actor.horaires_initiative && <div style={{fontSize: '18px', marginTop: '10px'}}><b>Horaires :</b>{` ${actor.horaires_initiative}`}</div>}
             </div>
             <div style={{width: '40%', paddingLeft: '10px'}}>
               {map}
-              <div style={{fontSize: '20px', marginTop: '10px',}}>
-                <i className="fa fa-map-marker" aria-hidden="true" style={{marginRight: '10px'}}></i>
+              <div style={{fontSize: '16px', marginTop: '10px', display: 'flex', alignItems: 'center'}}>
+                <i className="fa fa-map-marker" aria-hidden="true" style={{marginRight: '10px', fontSize: '20px'}}></i>
                 <a target="_blank" href={`https://maps.google.com/?q=${actor.lat_initiative},${actor.long_initiative}&t=m`}>{actor.adress}</a>
               </div>
-              <div style={{fontSize: '20px', marginTop: '10px'}}>{processWebsite(actor.website_initiative)}</div>
-              <div style={{fontSize: '20px', marginTop: '10px'}}>{processRS(actor.rs_initiative)}</div>
-              <div style={{fontSize: '20px', marginTop: '10px'}} onClick={this.showMail}>
+              {actor.website_initiative && 
+                <div style={{fontSize: '16px', marginTop: '10px', display: 'flex', alignItems: 'center'}}>
+                  <i className="fa fa-external-link" aria-hidden="true" style={{marginRight: '10px'}}></i> 
+                  {processWebsite(actor.website_initiative)}
+                </div>
+              }
+              <div style={{fontSize: '16px'}} onClick={this.showMail}>
                 {showMail ?
                   (<div>
-                    <div style={{fontSize: '20px', marginTop: '10px'}}><a href={`mailto:${actor.email_initiative}`}>{actor.email_initiative}</a></div>
-                    <div style={{fontSize: '20px', marginTop: '10px'}}>{actor.tel_initiative}</div>
+                    {actor.email_initiative &&
+                      <div style={{fontSize: '16px', marginTop: '10px', display: 'flex', alignItems: 'center'}}>
+                        <i className="fa fa-envelope" aria-hidden="true" style={{marginRight: '10px', fontSize: '20px'}}></i>
+                        <a href={`mailto:${actor.email_initiative}`}>{actor.email_initiative}</a>
+                      </div>
+                    }
+                    {actor.tel_initiative && 
+                      <div style={{fontSize: '16px', marginTop: '10px', display: 'flex', alignItems: 'center'}}>
+                        <i className="fa fa-phone" aria-hidden="true" style={{marginRight: '10px', fontSize: '20px'}}></i>
+                        {actor.tel_initiative}
+                      </div>
+                    }
                   </div>) :
-                  (<div>
+                  (<div style={{display: 'flex', marginTop: '10px', alignItems: 'center'}}>
                     <i className="fa fa-address-card" aria-hidden="true" style={{marginRight: '10px'}}></i>
                     <span style={{cursor: 'pointer'}}>Afficher les informations de contact</span>
                   </div>)
                 }
               </div>
-              {actor.horaires_initiative && <div style={{fontSize: '20px', marginTop: '10px'}}><b>Horaires :</b>{` ${actor.horaires_initiative}`}</div>}
+              <div style={{fontSize: '16px', marginTop: '10px'}}>{processRS(actor.rs_initiative)}</div>
             </div>
           </div>
           <div style={STYLE_CONTENT}>

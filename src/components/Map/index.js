@@ -81,6 +81,9 @@ class CapMap extends Component {
 
   renderMarkers = () => {
     const {actors = [], filters, position} = this.props;
+    if (!actors.length) {
+      return null;
+    }
     return (
       <MarkerClusterGroup
         wrapperOptions={{
