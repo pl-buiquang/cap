@@ -43,6 +43,7 @@ const STYLE_ALT_LIST_EXP_RIGHT = {
 
 const STYLE_IMAGE = {
   height: '120px',
+  width: '120px',
   backgroundRepeat: 'no-repeat',
   backgroundPosition: '50% 50%',
   backgroundSize: 'cover',

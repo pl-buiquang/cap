@@ -23,6 +23,7 @@ const STYLE_BACK = {
 const STYLE_IMAGE = {
   marginTop: '10px',
   height: '240px',
+  width: '100%',
   backgroundRepeat: 'no-repeat',
   backgroundPosition: '50% 50%',
   backgroundSize: 'cover',
