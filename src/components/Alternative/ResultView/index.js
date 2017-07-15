@@ -8,6 +8,8 @@ const STYLE_ALT_LIST_EXP_CONTAINER = {
   margin: '0px 15px 5px 0px',
   cursor: 'pointer',
   backgroundColor: '#fff',
+  width: '100%',
+  boxSizing: 'border-box',
 };
 
 const STYLE_ALT_LIST_EXP_LEFT = {
@@ -38,7 +40,7 @@ const STYLE_NAME = {
 }
 
 const STYLE_ALT_LIST_EXP_RIGHT = {
-  flex: '0 0 75%',
+  flex: '0 1 75%',
 };
 
 const STYLE_IMAGE = {

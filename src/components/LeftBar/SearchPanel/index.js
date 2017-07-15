@@ -285,7 +285,7 @@ class SearchPanel extends Component {
           onKeyPress={this.handleKeyPress}
           onChange={e => this.updateQuery(e.target.value)}
         />
-        <div style={STYLE_HINT} className="cap-carto-alt-info-hint" onClick={this.showInfo}>Qu'est ce qu'une alternative ?</div>
+        <div style={STYLE_HINT} className="cap-carto-alt-info-hint" onClick={this.showInfo}>Qu'est ce qu'une alternative citoyenne ?</div>
         <ReactCSSTransitionGroup
           transitionName="slider"
           transitionAppear={true}
@@ -301,11 +301,11 @@ class SearchPanel extends Component {
           <div style={{display: 'flex', flexDirection: 'column'}}>
             <div className="cap-carto-typo-select" style={{...STYLE_BUTTON}} onClick={this.localizeMe}>
               <i className="fa fa-location-arrow" aria-hidden="true" style={{fontSize: '30px'}}></i>
-              <div style={{marginLeft: '10px', fontSize: '15px'}}>Près de ma position</div>
+              <div style={{marginLeft: '10px', fontSize: '15px'}}>Autour de moi</div>
             </div>
             <div className="cap-carto-typo-select" style={{...STYLE_BUTTON}} onClick={this.showRandom}>
               <div style={{backgroundImage: `url(${rollingDices})`, width: '30px', height: '30px'}} />
-              <div style={{marginLeft: '10px'}}>Aléatoire</div>
+              <div style={{marginLeft: '10px'}}>Au hasard</div>
             </div>
           </div>
           {this.renderTypoSelector()}

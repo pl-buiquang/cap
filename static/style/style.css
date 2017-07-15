@@ -65,3 +65,12 @@
 .cap-carto-typo-select:hover {
   box-shadow: 0px 8px 16px rgba(0,0,0,0.3);
 }
+
+.cap-carto-pagination-item{
+  color: #fff;
+  cursor: pointer;
+}
+
+.cap-carto-pagination-item.disabled{
+  display: none;
+}

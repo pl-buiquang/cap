@@ -1,8 +1,16 @@
 import React from 'react';
-import ResultView from '../../../Alternative/ResultView';
 import PerfectScrollbar from 'react-perfect-scrollbar';
+import ResultView from '../../../Alternative/ResultView';
+import Pagination from './Pagination';
 
 class ListView extends React.Component {
+  static propTypes = {
+    actors: React.PropTypes.array,
+  }
+
+  state = {
+    displayedItems: [],
+  }
 
   setPerfectScrollBar = (el) => {
     this.perfectScrollBarRef = el;
@@ -14,7 +22,7 @@ class ListView extends React.Component {
     }
   }
 
-  render() {
+  renderWithPerfectScrollbar = () =>{
     const {actors} = this.props;
     return (
       <div>
@@ -26,6 +34,31 @@ class ListView extends React.Component {
         <div style={{color: '#fff'}}>{`Total : ${actors.length}`}</div>
       </div>
     );
+  }
+
+  onChangePage = (items) => {
+    this.setState({
+      displayedItems: items
+    });
+  }
+
+  renderWithPagination = () => {
+    const {actors} = this.props;
+    const {displayedItems} = this.state;
+    return (
+      <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
+        <div style={{width: '100%'}}>
+          {displayedItems.map((a) => <ResultView key={a.id} actor={a} focus={this.props.focus} open={this.props.open}/>)}
+        </div>
+        <div style={{display: 'flex', width: '80%', justifyContent: 'center', alignItems: 'center', marginTop: '10px'}}>
+          <Pagination items={actors} onChangePage={this.onChangePage} />
+        </div>
+      </div>
+    );
+  }
+
+  render() {
+    return this.renderWithPagination();
   }
 }
 

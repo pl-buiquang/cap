@@ -26,20 +26,22 @@ class App extends Component {
     return (
       <div style={{ width: '100%'}}>
         <SearchPanel {...this.props} filteredActors={actors}/>
-        <div style={{ width: '40%', float: 'left'}}>
-          <LeftBar {...this.props} filteredActors={actors} />
-        </div>
-        <div style={{ width: '58%', float: 'right' }}>
-          <Map
-            actors={actors}
-            updateBounds={this.props.updateBounds}
-            actorView={this.props.actorView}
-            actorMapFocus={this.props.actorMapFocus}
-            closeActor={() => this.props.openActor(null)}
-            setMapRef={this.props.setMapRef}
-            openActor={this.props.openActor}
-            defaultLocation={this.props.defaultLocation}
-            filters={{zone: this.props.selectedZone, district: this.props.selectedDistrict}}/>
+        <div style={{display: 'flex', justifyContent: 'space-between'}}>
+          <div style={{ flex: '0 0 40%'}}>
+            <LeftBar {...this.props} filteredActors={actors} />
+          </div>
+          <div style={{ flex: '0 0 58%' }}>
+            <Map
+              actors={actors}
+              updateBounds={this.props.updateBounds}
+              actorView={this.props.actorView}
+              actorMapFocus={this.props.actorMapFocus}
+              closeActor={() => this.props.openActor(null)}
+              setMapRef={this.props.setMapRef}
+              openActor={this.props.openActor}
+              defaultLocation={this.props.defaultLocation}
+              filters={{zone: this.props.selectedZone, district: this.props.selectedDistrict}}/>
+          </div>
         </div>
       </div>
     );
