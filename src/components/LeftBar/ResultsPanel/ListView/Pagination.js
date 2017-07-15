@@ -149,21 +149,21 @@ class Pagination extends React.Component {
     return (
       <ul className="cap-carto-pagination" style={STYLE_UL}>
         <li className={pager.currentPage === 1 ? 'cap-carto-pagination-item disabled' : 'cap-carto-pagination-item'}>
-          <a onClick={() => this.setPage(1)}><i className="fa fa-angle-double-left" aria-hidden="true"></i></a>
+          <a className="cap-carto-pagination-item-link" onClick={() => this.setPage(1)}><i className="fa fa-angle-double-left" aria-hidden="true"></i></a>
         </li>
         <li className={pager.currentPage === 1 ? 'cap-carto-pagination-item disabled' : 'cap-carto-pagination-item'}>
-          <a onClick={() => this.setPage(pager.currentPage - 1)}><i className="fa fa-angle-left" aria-hidden="true"></i></a>
+          <a className="cap-carto-pagination-item-link" onClick={() => this.setPage(pager.currentPage - 1)}><i className="fa fa-angle-left" aria-hidden="true"></i></a>
         </li>
         {pager.pages.map((page, index) =>
           <li key={index} className={pager.currentPage === page ? 'cap-carto-pagination-item active' : 'cap-carto-pagination-item'}>
-            <a onClick={() => this.setPage(page)}>{page}</a>
+            <a className="cap-carto-pagination-item-link" onClick={() => this.setPage(page)}>{page}</a>
           </li>
         )}
         <li className={pager.currentPage === pager.totalPages ? 'cap-carto-pagination-item disabled' : 'cap-carto-pagination-item'}>
-          <a onClick={() => this.setPage(pager.currentPage + 1)}><i className="fa fa-angle-right" aria-hidden="true"></i></a>
+          <a className="cap-carto-pagination-item-link" onClick={() => this.setPage(pager.currentPage + 1)}><i className="fa fa-angle-right" aria-hidden="true"></i></a>
         </li>
         <li className={pager.currentPage === pager.totalPages ? 'cap-carto-pagination-item disabled' : 'cap-carto-pagination-item'}>
-          <a onClick={() => this.setPage(pager.totalPages)}><i className="fa fa-angle-double-right" aria-hidden="true"></i></a>
+          <a className="cap-carto-pagination-item-link" onClick={() => this.setPage(pager.totalPages)}><i className="fa fa-angle-double-right" aria-hidden="true"></i></a>
         </li>
       </ul>
     );

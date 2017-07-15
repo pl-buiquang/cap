@@ -74,3 +74,7 @@
 .cap-carto-pagination-item.disabled{
   display: none;
 }
+
+.cap-carto-pagination-item-link{
+  color: #fff;
+}
