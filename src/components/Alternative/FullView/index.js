@@ -176,7 +176,7 @@ class FullView extends React.Component {
                     {actor.tel_initiative && 
                       <div style={{fontSize: '16px', marginTop: '10px', display: 'flex', alignItems: 'center'}}>
                         <i className="fa fa-phone" aria-hidden="true" style={{marginRight: '10px', fontSize: '20px'}}></i>
-                        {actor.tel_initiative}
+                        <a href={`tel:${actor.email_initiative}`}>{actor.tel_initiative}</a>
                       </div>
                     }
                   </div>) :
