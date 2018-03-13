@@ -3,6 +3,12 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 import ResultView from '../../../Alternative/ResultView';
 import Pagination from './Pagination';
 
+const STYLE_RESULT_LIST = {
+  width: '100%',
+  display: 'flex',
+  flexWrap: 'wrap',
+};
+
 class ListView extends React.Component {
   static propTypes = {
     actors: React.PropTypes.array,
@@ -43,12 +49,12 @@ class ListView extends React.Component {
   }
 
   renderWithPagination = () => {
-    const {actors} = this.props;
+    const {actors = [], actorMapFocus} = this.props;
     const {displayedItems} = this.state;
     return (
       <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
-        <div style={{width: '100%'}}>
-          {displayedItems.map((a) => <ResultView key={a.id} actor={a} focus={this.props.focus} open={this.props.open}/>)}
+        <div style={STYLE_RESULT_LIST}>
+          {displayedItems.map((a) => <ResultView key={a.id} actor={a} focus={this.props.focus} open={this.props.open} focused={actorMapFocus == a.id}/>)}
         </div>
         <div style={{display: 'flex', width: '80%', justifyContent: 'center', alignItems: 'center', marginTop: '10px'}}>
           <Pagination items={actors} onChangePage={this.onChangePage} />

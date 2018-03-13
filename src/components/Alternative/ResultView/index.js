@@ -4,25 +4,18 @@ import config from '../../../utils/config.js';
 
 const STYLE_ALT_LIST_EXP_CONTAINER = {
   display: 'flex',
-  padding: '10px',
-  margin: '0px 15px 5px 0px',
+  padding: '20px',
   cursor: 'pointer',
   backgroundColor: '#fff',
   width: '100%',
   boxSizing: 'border-box',
+  flex: '0 0 50%',
 };
 
 const STYLE_ALT_LIST_EXP_LEFT = {
   flex: '0 0 25%'
 };
 
-const STYLE_TYPO = {
-  flex: '0 0 26px',
-  height: '26px',
-  backgroundRepeat: 'no-repeat',
-  backgroundPosition: '50% 50%',
-  backgroundSize: 'cover',
-}
 
 const STYLE_HEADER = {
   display: 'flex',
@@ -37,7 +30,19 @@ const STYLE_NAME = {
   fontFamily: 'Bebas Neue',
   fontSize: '26px',
   marginLeft: '15px',
-}
+  textDecoration: 'none',
+  color: 'inherit',
+};
+
+const STYLE_ADDRESS = {
+  color: '#a7a7a7',
+  marginTop: '10px',
+};
+
+const STYLE_TYPO = {
+  fontStyle: 'italic',
+  marginTop: '10px',
+};
 
 const STYLE_ALT_LIST_EXP_RIGHT = {
   flex: '0 1 75%',
@@ -57,30 +62,39 @@ class ResultView extends React.Component {
     open: React.PropTypes.func,
     actor: React.PropTypes.object,
     expanded: React.PropTypes.bool,
+    focused: React.PropTypes.bool,
   }
 
-  focus = () => {
-    this.props.open(this.props.actor.id);
+  goto = () => {
+    window.location = this.props.actor.url;
+  }
+
+  select = (active) => () => {
+    if (active) {
+      this.props.focus(this.props.actor.id);
+    } else {
+      this.props.focus(null);
+    }
   }
 
   render() {
-    const {name, adress} = this.props.actor;
+    const {name, adress, typo, tag} = this.props.actor;
+    const {focused} = this.props;
     const configData = config();
-    const typology = configData["typology"];
-    const typoInfo = typology.find(t => t.id == this.props.actor.id_typologie);
-    const typoImg = typoInfo && typoInfo["img"]["small"];
+    const image = this.props.actor.presa_image ? {backgroundImage: `url(${this.props.actor.presa_image})`} : {};
     return (
-      <div style={STYLE_ALT_LIST_EXP_CONTAINER} className="alt-list-view" onClick={this.focus}>
+      <div style={STYLE_ALT_LIST_EXP_CONTAINER} onMouseEnter={this.select(true)} onMouseLeave={this.select(false)}>
         <div style={STYLE_ALT_LIST_EXP_LEFT}>
-          <div className="alt-list-view-image" style={{...STYLE_IMAGE, backgroundImage: `url(${configData.baseURI+this.props.actor.presa_image})`}} />
+          <div className="alt-list-view-image" style={{...STYLE_IMAGE, ...image}} />
         </div>
         <div style={STYLE_ALT_LIST_EXP_RIGHT}>
           <div style={STYLE_HEADER}>
-            <div style={STYLE_NAME}>{name}</div>
-            <div style={{...STYLE_TYPO, backgroundImage: `url(${typoImg})`}}/>
+            <a href={this.props.actor.url}  style={{...STYLE_NAME, ...(focused ? {color: '#C02026'} : {})}}>{name}</a>
           </div>
           <div style={STYLE_CONTENT}>
-            <div>{adress}</div>
+            <div>{tag && tag.map(t => (<span key={t.id}>{t.label}</span>))}</div>
+            <div style={STYLE_ADDRESS}>{adress}</div>
+            <div style={STYLE_TYPO}>{typo && typo.map(t => (<span key={t.id}>{t.label}</span>))}</div>
           </div>
         </div>
       </div>

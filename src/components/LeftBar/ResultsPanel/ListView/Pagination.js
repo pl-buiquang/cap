@@ -23,7 +23,7 @@ const STYLE_EL = {
 
 }
 
-const PAGE_SIZE = 4;
+const PAGE_SIZE = 10;
 
 const range = (startPage, endPage) => {
   const myRange = [];
@@ -38,7 +38,7 @@ const itemsHaveChanged = (prevItems, newItems) => {
     return true;
   }
   for (var i = prevItems.length - 1; i >= 0; i--) {
-    if (!newItems.find(item => item.id === prevItems[i].id)){
+    if (newItems[i].id !== prevItems[i].id){
       return true;
     }
   }
@@ -53,8 +53,13 @@ class Pagination extends React.Component {
 
   componentWillMount() {
   // set page if items array isn't empty
-  console.log(this.props.items, "loading");
     if (this.props.items && this.props.items.length) {
+      this.setPage(this.props.initialPage);
+    }
+  }
+
+  componentWillReceiveProps(newProps) {
+    if (itemsHaveChanged(this.props.items, newProps.items)) {
       this.setPage(this.props.initialPage);
     }
   }
@@ -122,7 +127,6 @@ class Pagination extends React.Component {
 
     // create an array of pages to ng-repeat in the pager control
     var pages = range(startPage, endPage + 1);
-    console.log(pages);
 
     // return object with all pager properties required by the view
     return {

@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 import store from 'createStore.js';
 import App from './components/App';
 
-const MOUNT_NODE = document.getElementById('root');
+const MOUNT_NODE = document.getElementById('cap-custom-result');
 const __DEV__ = false;
 
 const render = (nodeId = MOUNT_NODE) => {

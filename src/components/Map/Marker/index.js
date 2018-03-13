@@ -3,34 +3,30 @@ import { Map, Marker, Popup, TileLayer } from 'react-leaflet';
 import config from 'utils/config.js';
 
 
-const getIcon = (typoId) => {
-  const configData = config();
-  const typology = configData["typology"];
-  const typoInfo = typology.find(t => t.id == typoId);
-  // TODO check if not found ! + add default icon
-  if (!typoInfo) {
-    return new L.Icon.Default();
-  }
-  return L.icon({
-    iconUrl: typoInfo["img"]["small"],
-    iconSize:     [26, 26], 
-    iconAnchor:   [13, 13], 
-    popupAnchor:  [-13, -13], 
-    className:`typo-${typoId}`,
-  });
+const getIcon = (id) => {
+
+  return L.divIcon({
+          className: 'eltd-map-marker-holder',
+          iconSize: [24, 24],
+          iconAnchor:   [7, 28],  
+          popupAnchor:  [0, -40], 
+          html: `<div id="cap-marker-${id}"><div class='pin'></div><div class='base'></div></div>`,
+        });
+
 }
 
 
 export const getActorMarker = (actor) => {
-  const {typo, lng, lat, adress, name} = actor;
+  const {typo, lng, lat, adress, name, url} = actor;
   return {
     lat: parseFloat(lat),
     lng: parseFloat(lng),
     options: {
-      icon: getIcon(typo),
+      icon: getIcon(actor.id),
       id: actor.id,
     },
-    popup: `<span>${name}<br/>${adress}</span>`,
+    riseOnHover: true,
+    popup: `<div style="font-weight: bold; cursor: pointer;" onclick="window.location = '${url}'">${name}</div><div>${adress}</div>`,
   }
 }
 

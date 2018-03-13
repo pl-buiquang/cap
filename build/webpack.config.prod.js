@@ -45,8 +45,15 @@ module.exports = {
       include: path.join(__dirname, 'src')
     },{ test: /\.json$/, loader: 'json' },
     {
+      test: /\.(png|jpg|gif)$/,
+      loader: 'url-loader?limit=8192',
+    },
+    {
       test: /.css$/,
       loader: 'style-loader!css-loader',
-    },]
+    },{
+      test: /\.(eot|svg|ttf|woff|woff2|otf)$/,
+      loader: 'file-loader',
+    }]
   }
 };

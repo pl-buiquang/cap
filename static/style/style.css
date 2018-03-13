@@ -55,7 +55,7 @@
 }
 
 .cap-carto-alt-info-hint {
-  color: #fff; /*#C02026;*/
+  color: #000; /*#C02026;*/
 }
 
 .cap-carto-typo-select {
@@ -67,7 +67,7 @@
 }
 
 .cap-carto-pagination-item{
-  color: #fff;
+  color: #000;
   cursor: pointer;
 }
 
@@ -76,5 +76,5 @@
 }
 
 .cap-carto-pagination-item-link{
-  color: #fff;
+  color: #000;
 }

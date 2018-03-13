@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { Map, Marker, Popup, TileLayer } from 'react-leaflet';
+import { Map, Marker, Popup, TileLayer, ZoomControl } from 'react-leaflet';
 import config from 'utils/config.js';
 import {CapMarker, getActorMarker} from './Marker';
 import FullView from '../Alternative/FullView';
 import MarkerClusterGroup from 'react-leaflet-markercluster';
+import 'react-leaflet-markercluster/dist/styles.css';
 
 class CapMap extends Component {
   static propTypes = {
@@ -45,6 +46,9 @@ class CapMap extends Component {
       this.latestPosition = null;
       this.latestZoom = null;
     }
+    if (newProps.actorMapFocus !== this.props.actorMapFocus){
+      
+    }
   }
 
   componentWillUnmount = () => {
@@ -80,19 +84,19 @@ class CapMap extends Component {
   }
 
   renderMarkers = () => {
-    const {actors = [], filters, position} = this.props;
+    const {actorMapFocus, actors = [], filters, position} = this.props;
     if (!actors.length) {
       return null;
     }
     return (
       <MarkerClusterGroup
-        wrapperOptions={{
-          enableDefaultStyle: true,
-        }}
         options={{
           showCoverageOnHover: false,
         }}
-        onMarkerClick={(m) => this.props.openActor(m.options.id)}
+        enableDefaultStyle={true}
+        onMarkerEnter={(marker) => { this.props.focusActor(marker.options.id);}}
+        onMarkerLeave={(marker) => { this.props.focusActor(null); }}
+        //onMarkerClick={(m) => m.openPopup()}
         markers=
           {actors && actors.map((actor) => (
             getActorMarker(actor)
@@ -118,19 +122,21 @@ class CapMap extends Component {
     if (overridePosition && overridePosition != this.latestPosition) {
       this.setLatestPosition();
     }
-    let zoom = overridePosition ? 17 : (this.latestZoom || (this.props.defaultLocation ? 15 :  12));
+    let zoom = overridePosition ? 17 : (this.latestZoom || (this.props.defaultLocation ? 15 :  6));
     return (
       <Map 
         center={overridePosition || this.latestPosition || this.props.defaultLocation || configData["defaultMapPosition"]}
         zoom={zoom}
         onClick={this.enableZoom}
-        style={{height: height}} 
+        zoomControl={false}
+        style={{height: '100%', width: '100%', position: 'absolute'}} 
         ref={mapRef => this.setMapRef(mapRef)}
         maxZoom={17}
-        minZoom={9}
+        minZoom={6}
         scrollWheelZoom={zoomEnabled}
-        maxBounds={[[48.288675734823855, 0.8404541015625001],[49.37343174238158, 3.8726806640625004]]}
+        //maxBounds={[[48.288675734823855, 0.8404541015625001],[49.37343174238158, 3.8726806640625004]]}
       >
+        <ZoomControl position="bottomleft" />
         <TileLayer
             url={configData['tileLayerURL']}
             attribution='<a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"http://mapbox.com\">Mapbox</a>'

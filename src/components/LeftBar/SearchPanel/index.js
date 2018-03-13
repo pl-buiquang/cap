@@ -9,7 +9,19 @@ import {altInfo} from '../../../services/requests';
 
 const STYLE_SEARCH_CONTAINER = {
   display: 'flex',
-  flexDirection: 'column',
+  flexDirection: 'row',
+  width: '100%',
+  justifyContent: 'center',
+  alignItems: 'center',
+  zIndex: 105,
+  background: '#fff',
+  position: 'absolute',
+  height: '50px',
+  flexWrap: 'wrap',
+}
+
+const STYLE_ELT = {
+  margin: '5px',
 }
 
 const STYLE_SEARCH = {
@@ -21,6 +33,8 @@ const STYLE_SEARCH = {
   paddingLeft: '4px',
   height: '35px',
   marginBottom: '4px',
+  border: 0,
+  borderBottom: '1px solid #646464',
 }
 
 const STYLE_HINT = {
@@ -47,13 +61,6 @@ const STYLE_INFO_POPUP_CLOSE = {
   color: '#fff',
 }
 
-const STYLE_TYPO_CONTAINER = {
-  margin: '10px 0',
-  display: 'flex',
-  flexWrap: 'wrap',
-  justifyContent: 'space-between',
-  borderLeft: '1px solid #fff'
-};
 
 const STYLE_TYPO_IMAGE = {
   backgroundRepeat: 'no-repeat',
@@ -72,6 +79,12 @@ const STYLE_OPTIONS = {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
+}
+
+const STYLE_SELECT = {
+  border: 0,
+  padding: '10px',
+  fontFamily: 'inherit',
 }
 
 const STYLE_BUTTON = {
@@ -106,8 +119,11 @@ class SearchPanel extends Component {
     searchActors: React.PropTypes.func,
     filteredActors: React.PropTypes.array,
     selectTypos: React.PropTypes.func,
+    selectZone: React.PropTypes.func,
+    selectedZone: React.PropTypes.string,
+    selectedTypos: React.PropTypes.string,
+    selectedKeyword: React.PropTypes.string,
     bounds: React.PropTypes.object,
-    selectedTypos: React.PropTypes.array,
     mapRef: React.PropTypes.object,
   }
 
@@ -116,16 +132,6 @@ class SearchPanel extends Component {
     showInfo: false,
     infoData: null,
     query: '',
-  }
-
-  selectTypo = (id) => {
-    const {selectedTypos} = this.props;
-    const index = selectedTypos.indexOf(id);
-    if (index !== -1){
-      this.props.selectTypos(selectedTypos.slice(0,index).concat(selectedTypos.slice(index + 1, selectedTypos.length)));
-    } else {
-      this.props.selectTypos(selectedTypos.concat([id]));
-    }
   }
 
   mapShowLocation = (e, locationType, locationId) => {
@@ -161,78 +167,55 @@ class SearchPanel extends Component {
   renderTypoSelector = () => {
     const {selectedTypos} = this.props;
     const configData = config();
-    const typology = configData["typology"];
+    const typology = [{id: "default", label: "toutes les thématiques"}].concat(configData["typology"] || []);
     return (
-      <div style={STYLE_TYPO_CONTAINER}>
-        {configData["typology"].map(typo => {
-          const index = selectedTypos.indexOf(typo['id']);
-          const opacity = selectedTypos.length && index === -1 ? '0.25' : '1';
-          const typoInfo = typology.find(t => t.id == typo['id']);
-          const typoImg = typoInfo && typoInfo["img"]["big"];
-          return (
-            <div 
-              key={typo['id']}
-              onClick={() => this.selectTypo(typo['id'])}
-              className="cap-carto-typo-select"
-              style={{
-                ...(style_typo(typo["color"], opacity)), 
-                ...(opacity === '0.25' ? {boxShadow: '0px 6px 10px rgba(0,0,0,0.2)'} : {}),
-                ...({fontSize: `${(typo['label'].length > 30 ? '14' : '16')}px`})
-              }}
-            >
-              <div style={{...STYLE_TYPO_IMAGE, backgroundImage: `url(${typoImg})`}} />
-              <div style={STYLE_TYPO_LABEL}>{typo["label"]}</div>
-            </div>
-          );
-        })}
+      <div style={STYLE_ELT}>
+        <select 
+          style={STYLE_SELECT} 
+          defaultValue={selectedTypos}
+          onChange={(e) => this.props.selectTypos(e.target.value)}>
+          {typology.map(typo => {
+            return (
+              <option 
+                key={typo['id']}
+                value={typo["id"]}>
+                {typo["label"]}
+              </option>
+            );
+          })}
+        </select>
       </div>
     );
   }
 
-  showInfo = () => {
-    const {infoData, showInfo} = this.state;
-    if (showInfo) {
-      this.setState({
-        showInfo: false,
-      });
-      return;
-    }
-    if (!infoData) {
-      altInfo().then(data => {
-        this.setState({
-          infoData: data,
-          showInfo: true,
-        });
-      }).catch(e => {
-        console.log(e);
-        this.setState({
-          infoData: null,
-          showInfo: false,
-        });
-      });
-    }else{
-      this.setState({
-        showInfo: true,
-      });      
-    }
-  }
-
-  renderInfo = () => {
-    const {infoData, showInfo} = this.state;
-    if (showInfo && infoData) {
-      return (
-          <div style={STYLE_INFO_POPUP} key="popup-info">
-            <div onClick={this.showInfo} style={STYLE_INFO_POPUP_CLOSE}>Fermer</div>
-            <div dangerouslySetInnerHTML={{__html: infoData}} />
-            <div onClick={this.showInfo} style={STYLE_INFO_POPUP_CLOSE}>Fermer</div>
-          </div>
-      );      
-    }
+  renderLocationSelector = () => {
+    const {selectedZone} = this.props;
+    const configData = config();
+    const locations = [{id: "default", label: "partout"}].concat(configData["location"] || []);
+    return (
+      <div style={STYLE_ELT}>
+        <select 
+          style={STYLE_SELECT}
+          defaultValue={selectedZone}
+          onChange={(e) => {this.props.selectZone(e.target.value);}}
+          >
+          {locations.map(location => {
+            return (
+              <option 
+                key={location['id']}
+                value={location["id"]}>
+                {location["label"]}
+              </option>
+            );
+          })}
+        </select>
+      </div>
+    );
   }
 
   searchActors = () => {
     const {query} = this.state;
-    this.props.searchActors(query);
+    this.props.searchKeywords(query);
   }
 
   updateQuery = (input) => {
@@ -241,7 +224,9 @@ class SearchPanel extends Component {
       this.setState({
         query: input.trim()
       }, function(){
-        this.searchActors();
+        if (!input.trim()){
+          this.searchActors();
+        }
       })
     }
   }
@@ -256,7 +241,6 @@ class SearchPanel extends Component {
     const {filteredActors} = this.props;
     if (filteredActors) {
       const actorId = Math.floor(Math.random() * filteredActors.length);
-      this.props.openActor(filteredActors[actorId].id);
     }
   }
 
@@ -274,41 +258,28 @@ class SearchPanel extends Component {
   }
 
   render() {
-    const {selectedZone, selectedDistrict} = this.props;
+    const {selectedZone, selectedDistrict, selectedKeyword} = this.props;
     return (
       <div style={STYLE_SEARCH_CONTAINER}>
-        <input 
-          name="search actor"
-          type="text"
-          style={STYLE_SEARCH}
-          placeholder="mot clé, nom d'initiative, ..."
-          onKeyPress={this.handleKeyPress}
-          onChange={e => this.updateQuery(e.target.value)}
-        />
-        <div style={STYLE_HINT} className="cap-carto-alt-info-hint" onClick={this.showInfo}>Qu'est ce qu'une alternative citoyenne ?</div>
-        <ReactCSSTransitionGroup
-          transitionName="slider"
-          transitionAppear={true}
-          transitionAppearTimeout={500}
-          transitionAppear={true}
-          transitionEnter={true}
-          transitionEnterTimeout={500}
-          transitionLeave={true}
-          transitionLeaveTimeout={500}>
-          {this.renderInfo()}
-        </ReactCSSTransitionGroup>
-        <div style={STYLE_OPTIONS}>
-          <div style={{display: 'flex', flexDirection: 'column'}}>
-            <div className="cap-carto-typo-select" style={{...STYLE_BUTTON}} onClick={this.localizeMe}>
-              <i className="fa fa-location-arrow" aria-hidden="true" style={{fontSize: '30px'}}></i>
-              <div style={{marginLeft: '10px', fontSize: '15px'}}>Autour de moi</div>
-            </div>
-            <div className="cap-carto-typo-select" style={{...STYLE_BUTTON}} onClick={this.showRandom}>
-              <div style={{backgroundImage: `url(${rollingDices})`, width: '30px', height: '30px'}} />
-              <div style={{marginLeft: '10px'}}>Au hasard</div>
-            </div>
-          </div>
-          {this.renderTypoSelector()}
+        <div style={{...STYLE_ELT, fontSize: '24px'}}>Je souhaite</div>
+        {this.renderTypoSelector()}
+        <div style={{...STYLE_ELT, fontSize: '24px'}}>
+        à
+        </div>
+        {this.renderLocationSelector()}
+        <div style={{...STYLE_ELT, fontSize: '24px'}}>
+        et plus particulièrement
+        </div>
+        <div style={STYLE_ELT}>
+          <input 
+            name="search actor"
+            type="text"
+            defaultValue={selectedKeyword}
+            style={STYLE_SEARCH}
+            placeholder="mot clé, nom d'initiative, ..."
+            onKeyPress={this.handleKeyPress}
+            onChange={e => this.updateQuery(e.target.value)}
+          />
         </div>
       </div>
     );

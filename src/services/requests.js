@@ -27,12 +27,11 @@ async function backendCall (path, query=null) {
       body: data
     };
   }
-  console.log(callConfig)
   return await fetch(configData.baseURI+path, callConfig);
 }
 
 async function customSearch (query) {
-  const data = await backendCall("/ws/alternatives/_all", query ? {query} : {});
+  const data = await backendCall("/wp-json/capaddons/alts", query ? query : {});
   return data.json();  
 }
 
@@ -49,7 +48,11 @@ const getSearchProvider = () => {
 }
 
 export const search = (query) => {
-  return getSearchProvider()(query);
+  return getSearchProvider()();
+}
+
+export const searchKeyword = (keyword) => {
+  return getSearchProvider()({keywords: keyword}); 
 }
 
 export async function altInfo () {

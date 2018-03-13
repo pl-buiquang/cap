@@ -13,7 +13,7 @@ module.exports = {
   },
   resolve: {
     root: [path.resolve('./src'), path.resolve('./node_modules')],
-    extensions: ['', '.js', '.jsx', '.json'],
+    extensions: ['', '.js', '.jsx', '.json', '.css'],
   },
   plugins: [
     new webpack.optimize.OccurrenceOrderPlugin(),
@@ -44,7 +44,7 @@ module.exports = {
     },
     { test: /\.json$/, loader: 'json' },
     {
-      test: /.css$/,
+      test: /\.css$/,
       loader: 'style-loader!css-loader',
     },{
       test: /\.(eot|svg|ttf|woff|woff2|otf)$/,
