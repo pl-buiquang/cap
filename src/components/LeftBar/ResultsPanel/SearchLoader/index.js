@@ -1,5 +1,4 @@
 import React from 'react';
-require('./style.css');
 
 const STYLE_CONTAINER = {
   marginTop: '50px',

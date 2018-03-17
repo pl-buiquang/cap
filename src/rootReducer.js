@@ -120,6 +120,7 @@ const mapActors = (actors) => (actors.map((a) => {
   });
 }));
 
+
 const initialState = {
   actors: configData["defaultActors"] ? mapActors(configData["defaultActors"]) : [],
   bounds: {},

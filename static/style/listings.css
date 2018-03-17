@@ -1,3 +1,8 @@
+.cap-search-bar {
+  position: absolute;
+  height: 50px;
+}
+
 .eltd-listing-single-holder .eltd-listing-title-holder .eltd-listing-rating-info .eltd-listing-item-category-icons .eltd-listing-item-category-icon, .eltd-listing-feat-list-holder article.eltd-listing-feat-listing-item .eltd-listing-item-category-icon {
   display: inline-block;
   font-size: 19px;

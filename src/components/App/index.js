@@ -6,7 +6,6 @@ import SearchPanel from 'components/LeftBar/SearchPanel';
 import * as actionCreators from 'rootReducer';
 import {filterActors, filterActorsByViewport} from 'utils/utils';
 import config from 'utils/config.js';
-import '../../../static/style/style.css';
 import '../../../static/style/marker.css';
 
 const extractBounds = bounds => {

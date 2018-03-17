@@ -2,7 +2,7 @@
 export const filterActorsByViewport = ({ ne, sw }, a) => {
   const { lat, lng } = a;
   if (!ne || !sw || !lat || !lng) {
-    return true;
+    return false;
   }
   const top = (ne.lat > parseFloat(lat));
   const bottom = (parseFloat(lat) > sw.lat);

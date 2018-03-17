@@ -15,8 +15,6 @@ const STYLE_SEARCH_CONTAINER = {
   alignItems: 'center',
   zIndex: 105,
   background: '#fff',
-  position: 'absolute',
-  height: '50px',
   flexWrap: 'wrap',
 }
 
@@ -260,7 +258,7 @@ class SearchPanel extends Component {
   render() {
     const {selectedZone, selectedDistrict, selectedKeyword} = this.props;
     return (
-      <div style={STYLE_SEARCH_CONTAINER}>
+      <div style={STYLE_SEARCH_CONTAINER} className={"cap-search-bar"}>
         <div style={{...STYLE_ELT, fontSize: '24px'}}>Je souhaite</div>
         {this.renderTypoSelector()}
         <div style={{...STYLE_ELT, fontSize: '24px'}}>

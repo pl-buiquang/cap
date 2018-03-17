@@ -1,6 +1,5 @@
 import algolia from 'algoliasearch';
 import config from 'utils/config.js';
-import data from 'cap_data.json';
 import 'whatwg-fetch';
 
 // todo make this dynamic (do not load algolia if not selected in config)
@@ -9,7 +8,7 @@ const algoliaSearch = (query) => algoliaIndex.search(query, { hitsPerPage: 3000 
 
 const mockSearch = (query) => {
   return new Promise((resolve, reject) => {
-    resolve({hits: data.map(obj => {return {...obj, id: obj.objectID};})});
+    resolve({hits: [].map(obj => {return {...obj, id: obj.objectID};})});
   });
 }
 
@@ -31,7 +30,7 @@ async function backendCall (path, query=null) {
 }
 
 async function customSearch (query) {
-  const data = await backendCall("/wp-json/capaddons/alts", query ? query : {});
+  const data = await backendCall("/wp-json/capalts/alts", query ? query : {});
   return data.json();  
 }
 

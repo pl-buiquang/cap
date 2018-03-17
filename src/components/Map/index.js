@@ -147,7 +147,7 @@ class CapMap extends Component {
   }
 
   render() {
-    const {actorView = null, actors} = this.props;
+    const {actorView = null, actors = []} = this.props;
     const actor = actors.find(a => a.id === actorView);
     // TODO move this elsewhere...
     if (actorView && !actor) {
