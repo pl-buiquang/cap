@@ -9,7 +9,7 @@ const STYLE_ALT_LIST_EXP_CONTAINER = {
   backgroundColor: '#fff',
   width: '100%',
   boxSizing: 'border-box',
-  flex: '0 0 50%',
+  flex: '1 0 50%',
 };
 
 const STYLE_ALT_LIST_EXP_LEFT = {

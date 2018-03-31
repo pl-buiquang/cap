@@ -133,7 +133,7 @@ class CapMap extends Component {
         ref={mapRef => this.setMapRef(mapRef)}
         maxZoom={17}
         minZoom={6}
-        scrollWheelZoom={zoomEnabled}
+        scrollWheelZoom={true}
         //maxBounds={[[48.288675734823855, 0.8404541015625001],[49.37343174238158, 3.8726806640625004]]}
       >
         <ZoomControl position="bottomleft" />
