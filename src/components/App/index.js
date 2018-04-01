@@ -4,7 +4,7 @@ import Map from 'components/Map';
 import LeftBar from 'components/LeftBar';
 import SearchPanel from 'components/LeftBar/SearchPanel';
 import * as actionCreators from 'rootReducer';
-import {filterActors, filterActorsByViewport} from 'utils/utils';
+import {filterActors, filterActorsByViewport, getBounds} from 'utils/utils';
 import config from 'utils/config.js';
 import '../../../static/style/marker.css';
 
@@ -32,10 +32,12 @@ class App extends Component {
           <div className="eltd-map-holder">
             <div id="eltd-listing-multiple-map-holder" style={{position: 'relative', overflow: 'hidden'}}>
               <Map
+                bounds={getBounds(filteredActors)}
                 actors={actors}
                 focusActor={this.props.focusActor}
                 updateBounds={this.props.updateBounds}
                 actorView={this.props.actorView}
+                setDefaultLocation={this.props.setDefaultLocation}
                 actorMapFocus={this.props.actorMapFocus}
                 closeActor={() => this.props.openActor(null)}
                 setMapRef={this.props.setMapRef}

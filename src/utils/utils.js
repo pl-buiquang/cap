@@ -31,7 +31,41 @@ export const findClassHtmlCollection = (klass, collection) => {
   return null;
 }
 
-export const animateMarker = (markerId, active) => {
+const findMarkerInCluster = (markerId, cluster) => {
+  const marker = cluster._markers.find(m => m.options.id == markerId);
+  if (marker) {
+    return marker;
+  }
+  for (var i = cluster._childClusters.length - 1; i >= 0; i--) {
+    const markerInCluster = findMarkerInCluster(markerId, cluster._childClusters[i]);
+    if (markerInCluster) {
+      return markerInCluster;
+    }
+  }
+  return null;
+}
+
+const findMarker = (markerId, mapRef) => {
+  const layers = Object.keys(mapRef._layers);
+  for (var i = layers.length - 1; i >= 0; i--) {
+    const layer = mapRef._layers[layers[i]];
+    if (layer.options) {
+      if (layer.options.pane === "markerPane") {
+        const marker = findMarkerInCluster(markerId, layer);
+        if (marker) {
+          return marker;
+        }
+      } else if(layer.options.type === "capmarker") {
+        if (layer.options.id == markerId) {
+          return layer;
+        }
+      }
+    } 
+  }
+  return null;
+} 
+
+export const animateMarker = (markerId, active, mapRef) => {
   const el = document.getElementById(`cap-marker-${markerId}`);
   if (el) {
     const pin = findClassHtmlCollection('pin', el.children);
@@ -62,4 +96,46 @@ export const sortByCommentCount = (list, reverse = false) => {
     const res = b.comment_count - a.comment_count;
     return reverse ? - res : res;
   }); 
+}
+
+export const getBounds = (actors) => {
+  const seed = actors.find(a => {
+    try {
+      if (a.lat && a.lng) {
+        const lat = parseFloat(a.lat);
+        const lng = parseFloat(a.lng);
+        return true;        
+      }
+      return false;
+    } catch (e) {
+      return false;  
+    }
+  });
+  if (seed) {
+    const calculation = actors.reduce((center, a)=>{
+      if (!a.lat || !a.lng) {
+        return center;
+      }
+      try {
+        const lat = parseFloat(a.lat);
+        const lng = parseFloat(a.lng);
+        const newBounds = {
+          top: center.top > lat ? center.top : lat,
+          bottom: center.bottom > lat ? lat : center.bottom,
+          right: center.right < lng ? center.right : lng,
+          left: center.left < lng ? lng : center.left,
+          count: center.count + 1
+        };
+        return newBounds;
+      } catch (e) {
+        return center;  
+      }
+    }, {top:seed.lat, bottom:seed.lat, left:seed.lng, right: seed.lng, count: 0});
+    if (calculation.count) {
+      return {
+        _northEast: {lat: calculation.top, lng: calculation.left}, 
+        _southWest: {lat: calculation.bottom, lng: calculation.right}, 
+      };
+    }    
+  }
 }

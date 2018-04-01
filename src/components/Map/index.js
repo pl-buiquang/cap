@@ -6,8 +6,14 @@ import FullView from '../Alternative/FullView';
 import MarkerClusterGroup from 'react-leaflet-markercluster';
 import 'react-leaflet-markercluster/dist/styles.css';
 
+
+const mapBounds = (bounds) => {
+  return [[bounds._southWest.lat, bounds._southWest.lng],[bounds._northEast.lat, bounds._northEast.lng]];
+}
+
 class CapMap extends Component {
   static propTypes = {
+    bounds: React.PropTypes.object,
     actors: React.PropTypes.array,
     filters: React.PropTypes.object,
     updateBounds: React.PropTypes.func,
@@ -17,6 +23,7 @@ class CapMap extends Component {
     closeActor: React.PropTypes.func,
     openActor: React.PropTypes.func,
     defaultLocation: React.PropTypes.array,
+    setDefaultLocation: React.PropTypes.func,
   }
 
   latestPosition = null;
@@ -48,6 +55,17 @@ class CapMap extends Component {
     }
     if (newProps.actorMapFocus !== this.props.actorMapFocus){
       
+    }
+    if (newProps.bounds) {
+      if (!this.props.bounds || (
+        newProps.bounds._southWest.lat != this.props.bounds._southWest.lat ||
+        newProps.bounds._southWest.lng != this.props.bounds._southWest.lng ||
+        newProps.bounds._northEast.lat != this.props.bounds._northEast.lat ||
+        newProps.bounds._northEast.lng != this.props.bounds._northEast.lng)) {
+        this.props.updateBounds(newProps.bounds);
+        
+        console.log(newProps.bounds);
+      }      
     }
   }
 
@@ -134,7 +152,9 @@ class CapMap extends Component {
         maxZoom={17}
         minZoom={6}
         scrollWheelZoom={true}
-        //maxBounds={[[48.288675734823855, 0.8404541015625001],[49.37343174238158, 3.8726806640625004]]}
+        bounds={this.props.bounds ? mapBounds(this.props.bounds) : [[53.76170183021052, 8.349609375000002],[39.36827914916014, -5.075683593750001]]}
+        //boundsOptions={{padding: [0.1, 0.1]}}
+        //maxBounds={[[53.76170183021052, 8.349609375000002],[39.36827914916014, -5.075683593750001]]}
       >
         <ZoomControl position="bottomleft" />
         <TileLayer

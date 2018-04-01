@@ -53,11 +53,11 @@ class ListView extends React.Component {
     const {displayedItems} = this.state;
     return (
       <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
+        <div style={{display: 'flex', width: '80%', justifyContent: 'center', alignItems: 'center', marginBottom: '10px'}}>
+          <Pagination items={actors} onChangePage={this.onChangePage} />
+        </div>
         <div style={STYLE_RESULT_LIST}>
           {displayedItems.map((a) => <ResultView key={a.id} actor={a} focus={this.props.focus} open={this.props.open} focused={actorMapFocus == a.id}/>)}
-        </div>
-        <div style={{display: 'flex', width: '80%', justifyContent: 'center', alignItems: 'center', marginTop: '10px'}}>
-          <Pagination items={actors} onChangePage={this.onChangePage} />
         </div>
       </div>
     );

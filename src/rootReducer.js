@@ -31,10 +31,10 @@ export const sortByComment = () => (dispatch, getState) => {
 export const focusActor = actorId =>  (dispatch, getState) => {
   const state = getState();
   if (state.actorMapFocus) {
-    animateMarker(state.actorMapFocus, false);
+    animateMarker(state.actorMapFocus, false, state.mapRef);
   }
   if (actorId) {
-    animateMarker(actorId, true);
+    animateMarker(actorId, true, state.mapRef);
   }
   dispatch({ type: 'FOCUS_ACTOR', payload: actorId});
 };

@@ -24,6 +24,7 @@ export const getActorMarker = (actor) => {
     options: {
       icon: getIcon(actor.id),
       id: actor.id,
+      type: "capmarker",
     },
     riseOnHover: true,
     popup: `<div style="font-weight: bold; cursor: pointer;" onclick="window.location = '${url}'">${name}</div><div>${adress}</div>`,
