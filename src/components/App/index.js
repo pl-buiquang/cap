@@ -4,7 +4,7 @@ import Map from 'components/Map';
 import LeftBar from 'components/LeftBar';
 import SearchPanel from 'components/LeftBar/SearchPanel';
 import * as actionCreators from 'rootReducer';
-import {filterActors, filterActorsByViewport, getBounds} from 'utils/utils';
+import {filterActors, filterActorsByViewport, getBounds, filteActorsByLocation} from 'utils/utils';
 import config from 'utils/config.js';
 import '../../../static/style/marker.css';
 
@@ -17,12 +17,13 @@ const extractBounds = bounds => {
 class App extends Component {
   componentDidMount() {
     const {actors} = this.props;
-    //this.props.searchActors('');
+    this.props.searchActors('');
   }
   render() {
     // filter actors here OR actors are filtered already via search ?
     // add filterActorsByViewport(this.props.bounds,a) to filter callback
     const filteredActors = this.props.actors.filter(a => filterActors(a, this.props));
+    const filteredActorsForLocation = filteredActors.filter(a => filteActorsByLocation(a, this.props));
     const actors = filteredActors.filter(a => filterActorsByViewport(this.props.bounds, a));
     const configData = config();
     return (
@@ -32,7 +33,7 @@ class App extends Component {
           <div className="eltd-map-holder">
             <div id="eltd-listing-multiple-map-holder" style={{position: 'relative', overflow: 'hidden'}}>
               <Map
-                bounds={getBounds(filteredActors)}
+                bounds={getBounds(filteredActorsForLocation)}
                 actors={actors}
                 focusActor={this.props.focusActor}
                 updateBounds={this.props.updateBounds}
@@ -46,7 +47,7 @@ class App extends Component {
             </div>
           </div>
           <div className="eltd-listing-list eltd-advanced-search-holder" style={{marginTop:'50px'}}>
-            <LeftBar {...this.props} filteredActors={actors} count={filteredActors.length}/>
+            <LeftBar {...this.props} filteredActors={actors} count={filteredActorsForLocation.length}/>
           </div>
         </div>
       </div>

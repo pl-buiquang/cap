@@ -8,7 +8,7 @@ import 'react-leaflet-markercluster/dist/styles.css';
 
 
 const mapBounds = (bounds) => {
-  return [[bounds._southWest.lat, bounds._southWest.lng],[bounds._northEast.lat, bounds._northEast.lng]];
+  return [[parseFloat(bounds._southWest.lat) - 0.01, parseFloat(bounds._southWest.lng) - 0.01],[parseFloat(bounds._northEast.lat) + 0.01, parseFloat(bounds._northEast.lng) + 0.01]];
 }
 
 class CapMap extends Component {
@@ -63,8 +63,6 @@ class CapMap extends Component {
         newProps.bounds._northEast.lat != this.props.bounds._northEast.lat ||
         newProps.bounds._northEast.lng != this.props.bounds._northEast.lng)) {
         this.props.updateBounds(newProps.bounds);
-        
-        console.log(newProps.bounds);
       }      
     }
   }
@@ -75,6 +73,7 @@ class CapMap extends Component {
 
   setMapRef = (mapRef) => {
     const {actorView = null} = this.props;
+    console.log(mapRef);
     if (!actorView && mapRef && mapRef.leafletElement != this.mapRef) {
       const lMap = mapRef.leafletElement;
       this.props.updateBounds(lMap.getBounds());

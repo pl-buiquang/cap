@@ -16,6 +16,7 @@ const STYLE_SORTER = {
 
 export default (props) => {
   const {count, sorting, filteredActors} = props;
+  const finalCount = count > filteredActors.length ? count : filteredActors.length;
   return (
     <div>
       <div style={STYLE_RESULT_HEADER}>
@@ -27,7 +28,7 @@ export default (props) => {
           <span>Trier par nombre de commentaires</span>
           {sorting.comments !== null ? <i style={{marginLeft: '5px'}} className={`fa fa-chevron-${sorting.comments ? 'up' : 'down'}`}/> : null}
         </div>
-        <div>{`Total : ${count}, Affichées : ${filteredActors.length}`}</div>
+        <div>{`Total (filtres) : ${count}, Affichées : ${filteredActors.length}`}</div>
       </div>
       <ResultsPanel {...props}/>
     </div>

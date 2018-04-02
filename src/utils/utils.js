@@ -11,15 +11,21 @@ export const filterActorsByViewport = ({ ne, sw }, a) => {
 
   const horizontal = (top && bottom);
   const vertical = (right && left);
-  return (horizontal && vertical);
+  const ok = (horizontal && vertical);
+  return ok;
 };
 
-export const filterActors = ( a, {selectedZone, selectedTypos, selectedKeywords} ) => {
+export const filterActors = ( a, {selectedTypos, selectedKeywords} ) => {
   const {zone, typo, id} = a;
-  const zoneOk = selectedZone !== "default" ? zone && zone.find(e => e.id == selectedZone) : true;
   const typoOk = selectedTypos !== "default" ? typo && typo.find(e => e.id == selectedTypos) : true;
   const keywordsOk = !selectedKeywords || selectedKeywords.find(e => e == id);
-  return zoneOk && typoOk && keywordsOk;
+  return typoOk && keywordsOk;
+}
+
+export const filteActorsByLocation = ( a, {selectedZone} ) => {
+  const {zone, id} = a;
+  const zoneOk = selectedZone !== "default" ? zone && zone.find(e => e.id == selectedZone) : true;
+  return zoneOk;
 }
 
 export const findClassHtmlCollection = (klass, collection) => {
@@ -98,38 +104,45 @@ export const sortByCommentCount = (list, reverse = false) => {
   }); 
 }
 
+const validLatLng = (actor) => {
+  if (actor.lat && actor.lng) {
+    try {
+      const geo = {
+        lat: parseFloat(actor.lat),
+        lng: parseFloat(actor.lng)
+      };
+      if (geo.lat < 54.1109429427243 && 
+        geo.lat > 39.825413103424786 &&
+        geo.lng < 14.062500000000002 &&
+        geo.lng > -10.634765625) {
+        return geo;
+      } else {
+        console.log(actor, "Out of bound latlong...");
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
+}
+
 export const getBounds = (actors) => {
   const seed = actors.find(a => {
-    try {
-      if (a.lat && a.lng) {
-        const lat = parseFloat(a.lat);
-        const lng = parseFloat(a.lng);
-        return true;        
-      }
-      return false;
-    } catch (e) {
-      return false;  
-    }
+    return validLatLng(a);
   });
   if (seed) {
     const calculation = actors.reduce((center, a)=>{
-      if (!a.lat || !a.lng) {
-        return center;
-      }
-      try {
-        const lat = parseFloat(a.lat);
-        const lng = parseFloat(a.lng);
+      const geo = validLatLng(a);
+      if (geo) {
         const newBounds = {
-          top: center.top > lat ? center.top : lat,
-          bottom: center.bottom > lat ? lat : center.bottom,
-          right: center.right < lng ? center.right : lng,
-          left: center.left < lng ? lng : center.left,
+          top: center.top > geo.lat ? center.top : geo.lat,
+          bottom: center.bottom > geo.lat ? geo.lat : center.bottom,
+          right: center.right < geo.lng ? center.right : geo.lng,
+          left: center.left < geo.lng ? geo.lng : center.left,
           count: center.count + 1
         };
         return newBounds;
-      } catch (e) {
-        return center;  
       }
+      return center;  
     }, {top:seed.lat, bottom:seed.lat, left:seed.lng, right: seed.lng, count: 0});
     if (calculation.count) {
       return {
