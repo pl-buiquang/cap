@@ -128,6 +128,7 @@ class SearchPanel extends Component {
     shownLocation: null,
     showInfo: false,
     infoData: null,
+    tags: null,
   }
 
   mapShowLocation = (e, locationType, locationId) => {
@@ -161,8 +162,10 @@ class SearchPanel extends Component {
   }
 
   renderTypoSelector = () => {
-    const {selectedTypos} = this.props;
+    const {selectedTypos, selectedKeyword = ""} = this.props;
+    const selectedKeywords = selectedKeyword.split(",");
     const configData = config();
+    const {deps, tags} = configData;
     const typology = [{id: "default", label: "toutes les thématiques"}].concat(configData["typology"] || []);
     return (
       <div style={STYLE_ELT}>
@@ -176,7 +179,23 @@ class SearchPanel extends Component {
             }))
           }
           style={{width: '220px'}}
-          onChange={(e) => this.props.selectTypos(e ? e.value : "default")}>
+          onChange={(e) => {
+            if (deps && e && deps.cat_to_tag[e.label] && deps.cat_to_tag[e.label].length) {
+                const filteredTags = tags.filter(t => deps.cat_to_tag[e.label].indexOf(t.label) !== -1);
+                const obsoleteKeywords = selectedKeywords.find(k => deps.cat_to_tag[e.label].indexOf(k.label) === -1);
+                if (obsoleteKeywords) {
+                  this.updateQuery("");                  
+                }
+                this.setState({
+                  tags: filteredTags.length && filteredTags
+                });
+            } else {
+                this.setState({
+                  tags: null,
+                });
+            }
+            this.props.selectTypos(e ? e.value : "default");
+          }}>
         </Select>
       </div>
     );
@@ -207,17 +226,17 @@ class SearchPanel extends Component {
 
   renderTagsSelector = () => {
     const {selectedKeyword = ""} = this.props;
-    console.log(selectedKeyword, "q")
+    const {tags} = this.state; 
     const configData = config();
-    const tags = configData["tags"] || [];
+    const tagOptions = tags || configData["tags"] || [];
     const selectedKeywords = selectedKeyword.split(",");
-    const selectedTags = selectedKeywords.map(k => tags.find(t => t.label === k)).filter(o => o).map(t => t.id);
+    const selectedTags = selectedKeywords.map(k => tagOptions.find(t => t.label === k)).filter(o => o).map(t => t.id);
     return (
       <div style={STYLE_ELT}>
         <Select 
           value={selectedTags}
           options={
-            tags.map(tag => ({
+            tagOptions.map(tag => ({
               value: tag['id'],
               label: tag["label"]
             }))
@@ -227,7 +246,6 @@ class SearchPanel extends Component {
           style={{width: '220px'}}
           className={"cap-carto-search-select"}
           onChange={(e) => {
-            console.log(e, "d");
             if (e.length > 1) {
               this.updateQuery(e.slice(1).reduce((query, term) => query + "," + term.label, e[0].label));
             } else if (e.length == 1) {
