@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import Select from 'react-select';
-import 'react-select/dist/react-select.css';
 import config from 'utils/config.js';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import searchImage from '../../../../static/img/search.png'
@@ -129,7 +128,6 @@ class SearchPanel extends Component {
     shownLocation: null,
     showInfo: false,
     infoData: null,
-    query: '',
   }
 
   mapShowLocation = (e, locationType, locationId) => {
@@ -168,20 +166,18 @@ class SearchPanel extends Component {
     const typology = [{id: "default", label: "toutes les thématiques"}].concat(configData["typology"] || []);
     return (
       <div style={STYLE_ELT}>
-        <select 
-          style={STYLE_SELECT} 
-          defaultValue={selectedTypos}
-          onChange={(e) => this.props.selectTypos(e.target.value)}>
-          {typology.map(typo => {
-            return (
-              <option 
-                key={typo['id']}
-                value={typo["id"]}>
-                {typo["label"]}
-              </option>
-            );
-          })}
-        </select>
+        <Select 
+          className={"cap-carto-search-select"} 
+          value={selectedTypos}
+          options={
+            typology.map(typo => ({
+              value: typo['id'],
+              label: typo["label"]
+            }))
+          }
+          style={{width: '200px'}}
+          onChange={(e) => this.props.selectTypos(e ? e.value : "default")}>
+        </Select>
       </div>
     );
   }
@@ -189,50 +185,66 @@ class SearchPanel extends Component {
   renderLocationSelector = () => {
     const {selectedZone} = this.props;
     const configData = config();
-    const locations = [{id: "default", label: "partout"}].concat(configData["location"] || []);
+    const locations = [{id: "default", label: "partout", clearable: false}].concat(configData["location"] || []);
     return (
       <div style={STYLE_ELT}>
-        <select 
-          style={STYLE_SELECT}
-          defaultValue={selectedZone}
-          onChange={(e) => {this.props.selectZone(e.target.value);}}
+        <Select 
+          value={selectedZone}
+          options={
+            locations.map(location => ({
+              value: location['id'],
+              label: location["label"]
+            }))
+          }
+          className={"cap-carto-search-select"}
+          style={{width: '100px'}}
+          onChange={(e) => {this.props.selectZone(e ? e.value : "default");}}
           >
-          {locations.map(location => {
-            return (
-              <option 
-                key={location['id']}
-                value={location["id"]}>
-                {location["label"]}
-              </option>
-            );
-          })}
-        </select>
+        </Select>
       </div>
     );
   }
 
-  searchActors = () => {
-    const {query} = this.state;
-    this.props.searchKeywords(query);
+  renderTagsSelector = () => {
+    const {selectedKeyword = ""} = this.props;
+    console.log(selectedKeyword, "q")
+    const configData = config();
+    const tags = configData["tags"] || [];
+    const selectedKeywords = selectedKeyword.split(",");
+    const selectedTags = selectedKeywords.map(k => tags.find(t => t.label === k)).filter(o => o).map(t => t.id);
+    return (
+      <div style={STYLE_ELT}>
+        <Select 
+          value={selectedTags}
+          options={
+            tags.map(tag => ({
+              value: tag['id'],
+              label: tag["label"]
+            }))
+          }
+          placeholder = {"Type"}
+          multi
+          style={{width: '200px'}}
+          className={"cap-carto-search-select"}
+          onChange={(e) => {
+            console.log(e, "d");
+            if (e.length > 1) {
+              this.updateQuery(e.slice(1).reduce((query, term) => query + "," + term.label, e[0].label));
+            } else if (e.length == 1) {
+              this.updateQuery(e[0].label);  
+            } else {
+              this.updateQuery("");  
+            }
+          }}
+          >
+        </Select>
+      </div>
+    );
   }
+
 
   updateQuery = (input) => {
-    const {query} = this.state;
-    if (input.trim() !== query) {
-      this.setState({
-        query: input.trim()
-      }, function(){
-        if (!input.trim()){
-          this.searchActors();
-        }
-      })
-    }
-  }
-
-  handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
-      this.searchActors();
-    }
+    this.props.searchKeywords(input);
   }
 
   showRandom = () => {
@@ -268,17 +280,7 @@ class SearchPanel extends Component {
         <div style={{...STYLE_ELT, fontSize: '24px'}}>
         et plus particulièrement
         </div>
-        <div style={STYLE_ELT}>
-          <input 
-            name="search actor"
-            type="text"
-            defaultValue={selectedKeyword}
-            style={STYLE_SEARCH}
-            placeholder="mot clé, nom d'initiative, ..."
-            onKeyPress={this.handleKeyPress}
-            onChange={e => this.updateQuery(e.target.value)}
-          />
-        </div>
+        {this.renderTagsSelector()}
       </div>
     );
   }

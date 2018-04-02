@@ -73,7 +73,6 @@ class CapMap extends Component {
 
   setMapRef = (mapRef) => {
     const {actorView = null} = this.props;
-    console.log(mapRef);
     if (!actorView && mapRef && mapRef.leafletElement != this.mapRef) {
       const lMap = mapRef.leafletElement;
       this.props.updateBounds(lMap.getBounds());

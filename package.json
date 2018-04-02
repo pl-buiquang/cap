@@ -63,7 +63,7 @@
     "react-leaflet-markercluster": "file:lib/react-leaflet-markercluster",
     "react-perfect-scrollbar": "^0.1.1",
     "react-redux": "^4.4.6",
-    "react-select": "^1.0.0-rc.2",
+    "react-select": "^1.2.1",
     "redux": "^3.6.0",
     "redux-thunk": "^2.1.0",
     "reselect": "^2.5.4",
