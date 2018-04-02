@@ -17,7 +17,7 @@ const extractBounds = bounds => {
 class App extends Component {
   componentDidMount() {
     const {actors} = this.props;
-    this.props.searchActors('');
+    //this.props.searchActors('');
   }
   render() {
     // filter actors here OR actors are filtered already via search ?
@@ -28,7 +28,16 @@ class App extends Component {
     const configData = config();
     return (
       <div style={{ width: '100%', zIndex: 100}}>
-        <SearchPanel {...this.props} filteredActors={actors}/>
+        <div style={{position: 'absolute', width: '100%'}}>
+          <div>
+            <SearchPanel {...this.props} filteredActors={actors}/>
+          </div>
+          <div className="eltd-listing-items-with-map"  style={{position: 'absolute'}}>
+            <div className="eltd-listing-list eltd-advanced-search-holder">
+              <LeftBar {...this.props} filteredActors={actors} count={filteredActorsForLocation.length}/>
+            </div>
+          </div>
+        </div>
         <div className="eltd-full-width-inner clearfix eltd-listing-items-with-map">
           <div className="eltd-map-holder">
             <div id="eltd-listing-multiple-map-holder" style={{position: 'relative', overflow: 'hidden'}}>
@@ -45,9 +54,6 @@ class App extends Component {
                 defaultLocation={this.props.defaultLocation}
                 filters={{zone: this.props.selectedZone, district: this.props.selectedDistrict}}/>            
             </div>
-          </div>
-          <div className="eltd-listing-list eltd-advanced-search-holder" style={{marginTop:'50px'}}>
-            <LeftBar {...this.props} filteredActors={actors} count={filteredActorsForLocation.length}/>
           </div>
         </div>
       </div>
