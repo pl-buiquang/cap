@@ -175,7 +175,7 @@ class SearchPanel extends Component {
               label: typo["label"]
             }))
           }
-          style={{width: '200px'}}
+          style={{width: '220px'}}
           onChange={(e) => this.props.selectTypos(e ? e.value : "default")}>
         </Select>
       </div>
@@ -224,7 +224,7 @@ class SearchPanel extends Component {
           }
           placeholder = {"Type"}
           multi
-          style={{width: '200px'}}
+          style={{width: '220px'}}
           className={"cap-carto-search-select"}
           onChange={(e) => {
             console.log(e, "d");
@@ -271,16 +271,20 @@ class SearchPanel extends Component {
     const {selectedZone, selectedDistrict, selectedKeyword} = this.props;
     return (
       <div style={STYLE_SEARCH_CONTAINER} className={"cap-search-bar"}>
-        <div style={{...STYLE_ELT, fontSize: '24px'}}>Je souhaite</div>
+        <div style={{...STYLE_ELT, fontSize: '24px', marginLeft: '30px'}}>Je souhaite</div>
         {this.renderTypoSelector()}
-        <div style={{...STYLE_ELT, fontSize: '24px'}}>
-        à
+        <div style={{display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', marginLeft: '10px', marginRight: '10px'}}>
+          <div style={{...STYLE_ELT, fontSize: '24px'}}>
+          à
+          </div>
+          {this.renderLocationSelector()}
         </div>
-        {this.renderLocationSelector()}
-        <div style={{...STYLE_ELT, fontSize: '24px'}}>
-        et plus particulièrement
+        <div style={{display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', marginRight: '30px'}}>
+          <div style={{...STYLE_ELT, fontSize: '24px'}}>
+          et plus particulièrement
+          </div>
+          {this.renderTagsSelector()}
         </div>
-        {this.renderTagsSelector()}
       </div>
     );
   }

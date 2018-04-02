@@ -29,10 +29,8 @@ class App extends Component {
     return (
       <div style={{ width: '100%', zIndex: 100}}>
         <div style={{position: 'absolute', width: '100%'}}>
-          <div>
-            <SearchPanel {...this.props} filteredActors={actors}/>
-          </div>
-          <div className="eltd-listing-items-with-map"  style={{position: 'absolute'}}>
+          <SearchPanel {...this.props} filteredActors={actors}/>
+          <div className="eltd-listing-items-with-map">
             <div className="eltd-listing-list eltd-advanced-search-holder">
               <LeftBar {...this.props} filteredActors={actors} count={filteredActorsForLocation.length}/>
             </div>
